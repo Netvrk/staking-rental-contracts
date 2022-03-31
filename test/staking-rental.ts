@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { Signer } from "ethers";
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
 import { NFT, NFTStaking, NFTRental, NRGY } from "../typechain-types";
 
 describe("NFT World Staking & Rental", function () {
@@ -133,5 +133,18 @@ describe("NFT World Staking & Rental", function () {
     expect(await rental.isRentActive(1), "true");
     expect(await rental.getTenant(0), userAddress);
     expect(await rental.getTenant(1), userAddress);
+  });
+
+  it("Terminate rent after 2 days and unstake", async function () {
+    // After the rental time exceeds
+    await network.provider.send("evm_setNextBlockTimestamp", [1649021156]);
+    await network.provider.send("evm_mine");
+
+    // Terminate rent
+    await rental.terminateRent(0);
+    expect(await rental.isRentActive(0), "false");
+
+    await staking.unstake([0], ownerAddress);
+    expect(await staking.getStakingDuration(0), "0");
   });
 });

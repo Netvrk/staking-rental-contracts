@@ -23,6 +23,11 @@ interface INFTStaking is IERC165, IERC721Receiver {
         view
         returns (StakeInformation memory);
 
+    function getStakingDuration(uint256 tokenId)
+        external
+        view
+        returns (uint256);
+
     function isStakeActive(uint256 tokenId) external view returns (bool);
 
     function onERC721Received(

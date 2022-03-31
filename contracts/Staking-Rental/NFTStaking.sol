@@ -19,9 +19,9 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
 
     // ======== Admin functions ========
 
-    constructor(address nftw) {
-        require(nftw != address(0), "E0");
-        NFT_ERC721 = IERC721(nftw);
+    constructor(address nftAddress) {
+        require(nftAddress != address(0), "E0");
+        NFT_ERC721 = IERC721(nftAddress);
     }
 
     function setRentalContract(INFTRental _contract) external onlyOwner {
@@ -158,6 +158,18 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
         returns (StakeInformation memory)
     {
         return stakeInformation[tokenId];
+    }
+
+    function getStakingDuration(uint256 tokenId)
+        external
+        view
+        override
+        returns (uint256)
+    {
+        if (stakeInformation[tokenId].stakedFrom == 0) {
+            return 0;
+        }
+        return block.timestamp - stakeInformation[tokenId].stakedFrom;
     }
 
     function isStakeActive(uint256 tokenId)
