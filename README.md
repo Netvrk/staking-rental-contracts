@@ -8,3 +8,10 @@ This project includes the rental and staking contracts used in NetVrk ecosystem.
 npx hardhat compile
 npx hardhat run scripts/deploy.ts
 ```
+
+## NFT WORLD (Ropsten)
+
+- NFT:
+- Token:
+- Escrow:
+- Rental:
