@@ -18,6 +18,10 @@ describe("NFT World Staking & Rental", function () {
     [owner, user] = await ethers.getSigners();
     ownerAddress = await owner.getAddress();
     userAddress = await user.getAddress();
+
+    // Set initial time
+    await network.provider.send("evm_setNextBlockTimestamp", [1648875200]);
+    await network.provider.send("evm_mine");
   });
 
   it("Should deploy AXE NFT.", async function () {
@@ -135,7 +139,7 @@ describe("NFT World Staking & Rental", function () {
     expect(await rental.getTenant(1), userAddress);
   });
 
-  it("Terminate rent after 2 days and unstake", async function () {
+  it("Terminate rent after 2 days", async function () {
     // After the rental time exceeds
     await network.provider.send("evm_setNextBlockTimestamp", [1649021156]);
     await network.provider.send("evm_mine");
@@ -143,8 +147,26 @@ describe("NFT World Staking & Rental", function () {
     // Terminate rent
     await rental.terminateRent(0);
     expect(await rental.isRentActive(0), "false");
+  });
 
+  it("Should update rent Information while staking", async function () {
+    expect(await rental.isRentActive(0), "false");
+    const oldData = await staking.getStakeInformation(0);
+    await staking.updateRent([0], 50, 200, 1, 1651366277);
+    const newData = await staking.getStakeInformation(0);
+
+    expect(oldData.deposit.toString()).to.not.equal(newData.deposit.toString());
+  });
+
+  it("Should unstake NFT 0", async function () {
     await staking.unstake([0], ownerAddress);
     expect(await staking.getStakingDuration(0), "0");
+  });
+
+  it("Should extend rental period", async function () {
+    const oldPeriod = (await staking.getStakeInformation(1)).rentableUntil;
+    await staking.extendRentalPeriod(1, 1651366277);
+    const newPeriod = (await staking.getStakeInformation(1)).rentableUntil;
+    expect(oldPeriod).to.not.equal(newPeriod);
   });
 });

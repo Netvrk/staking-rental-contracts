@@ -53,7 +53,8 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
         require(stakeTo != address(this), "ES"); // ES: Stake to escrow
 
         require(
-            _rentableUntil > block.timestamp + (uint256(_minRentDays) * 1 days),
+            _rentableUntil >=
+                block.timestamp + (uint256(_minRentDays) * 1 days),
             "ET"
         ); // ET: Rentable until atleast minRentDays
 
@@ -88,6 +89,13 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
                 uint256(_rentalPerDay) * (uint256(_minRentDays) + 1),
             "ER"
         ); // ER: Rental rate incorrect
+
+        require(
+            _rentableUntil >=
+                block.timestamp + (uint256(_minRentDays) * 1 days),
+            "ET"
+        ); // ET: Rentable until atleast minRentDays
+
         for (uint256 i = 0; i < tokenIds.length; i++) {
             uint256 tokenId = tokenIds[i];
             StakeInformation storage stakeInformation_ = stakeInformation[
@@ -99,6 +107,7 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
                 "E9"
             ); // E9: Not your world
             require(!NFT_RENTAL.isRentActive(tokenId), "EB"); // EB: Ongoing rent
+
             stakeInformation_.deposit = _deposit;
             stakeInformation_.rentalPerDay = _rentalPerDay;
             stakeInformation_.minRentDays = _minRentDays;
@@ -118,6 +127,12 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
                 stakeInformation_.owner == _msgSender(),
             "E9"
         ); // E9: Not your world
+        require(
+            _rentableUntil >=
+                block.timestamp +
+                    (uint256(stakeInformation_.minRentDays) * 1 days),
+            "ET"
+        ); // ET: Rentable until atleast minRentDays
         stakeInformation_.rentableUntil = _rentableUntil;
     }
 
