@@ -160,8 +160,17 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
                 0
             );
 
+            // TODO: burn green pass (GreenPassNFT.burnGreenPass)
+
             emit Unstaked(tokenId, _msgSender());
         }
+    }
+
+    // TODO: mint green pass - callable by staker, returns GreenPassTokenIds
+    function mintGreenPass(uint256[] calldata tokenIds) public returns(uint256[]) {
+        // TODO: require: nft staked for at least 30 days for each tokenId
+        // TODO: require: sender is staker for each tokenId
+        // TODO: burn green pass (GreenPassNFT.mintGreenPass) for each tokenId
     }
 
     // ======== View only functions ========
