@@ -10,12 +10,15 @@ interface INFTStaking is IERC165, IERC721Receiver {
 
     struct StakeInformation {
         address owner; // staked to, otherwise owner == 0
-        uint16 deposit; // unit is ether, paid in NRGY. The deposit is deducted from the last payment(s) since the deposit is non-custodial
-        uint16 rentalPerDay; // unit is ether, paid in NRGY. Total is deposit + rentalPerDay * days
+        uint256 deposit; // unit is ether, paid in NRGY. The deposit is deducted from the last payment(s) since the deposit is non-custodial
+        uint256 rentalPerDay; // unit is ether, paid in NRGY. Total is deposit + rentalPerDay * days
         uint16 minRentDays; // must rent for at least min rent days, otherwise deposit is forfeited up to this amount
         uint32 rentableUntil; // timestamp in unix epoch
-        uint32 stakedFrom;
+        uint32 stakedFrom; // staked from timestamp
+        bool enableRenting; // enable/disable renting
     }
+
+    function getOriginalOwner(uint256 tokenId) external view returns (address);
 
     // view functions
     function getStakeInformation(uint256 tokenId)
@@ -40,18 +43,22 @@ interface INFTStaking is IERC165, IERC721Receiver {
     function stake(
         uint256[] calldata tokenIds,
         address stakeTo,
-        uint16 _deposit,
-        uint16 _rentalPerDay,
+        uint256 _deposit,
+        uint256 _rentalPerDay,
         uint16 _minRentDays,
-        uint32 _rentableUntil
+        uint32 _rentableUntil,
+        bool _enableRent
     ) external;
+
+    function setRenting(uint256[] calldata tokenIds, bool _enableRent) external;
 
     function updateRent(
         uint256[] calldata tokenIds,
-        uint16 _deposit,
-        uint16 _rentalPerDay,
+        uint256 _deposit,
+        uint256 _rentalPerDay,
         uint16 _minRentDays,
-        uint32 _rentableUntil
+        uint32 _rentableUntil,
+        bool _enableRent
     ) external;
 
     function extendRentalPeriod(uint256 tokenId, uint32 _rentableUntil)

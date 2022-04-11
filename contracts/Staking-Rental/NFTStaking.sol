@@ -17,8 +17,11 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
     INFTRental private NFT_RENTAL;
     mapping(uint256 => StakeInformation) private stakeInformation;
 
-    // ======== Admin functions ========
-
+    /**
+    ////////////////////////////////////////////////////
+    // Admin Functions 
+    ///////////////////////////////////////////////////
+     */
     constructor(address nftAddress) {
         require(nftAddress != address(0), "E0");
         NFT_ERC721 = IERC721(nftAddress);
@@ -32,32 +35,30 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
         NFT_RENTAL = _contract;
     }
 
-    // ======== Public functions ========
+    /**
+    ////////////////////////////////////////////////////
+    // Public Functions 
+    ///////////////////////////////////////////////////
+     */
 
-    // subsequent staking does not require dev signature
+    // Stake the NFT token
     function stake(
         uint256[] calldata tokenIds,
         address stakeTo,
-        uint16 _deposit,
-        uint16 _rentalPerDay,
+        uint256 _deposit,
+        uint256 _rentalPerDay,
         uint16 _minRentDays,
-        uint32 _rentableUntil
+        uint32 _rentableUntil,
+        bool _enableRenting
     ) external virtual override nonReentrant {
-        require(
-            uint256(_deposit) <=
-                uint256(_rentalPerDay) * (uint256(_minRentDays) + 1),
-            "ER"
-        ); // ER: Rental rate incorrect
-        // ensure stakeTo is EOA or ERC721Receiver to avoid token lockup
+        require(_deposit <= _rentalPerDay * (uint256(_minRentDays) + 1), "ER"); // ER: Rental rate incorrect
         _ensureEOAorERC721Receiver(stakeTo);
         require(stakeTo != address(this), "ES"); // ES: Stake to escrow
-
         require(
             _rentableUntil >=
                 block.timestamp + (uint256(_minRentDays) * 1 days),
             "ET"
         ); // ET: Rentable until atleast minRentDays
-
         for (uint256 i = 0; i < tokenIds.length; i++) {
             uint256 tokenId = tokenIds[i];
             require(NFT_ERC721.ownerOf(tokenId) == _msgSender(), "E9"); // E9: Not your world
@@ -68,10 +69,25 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
                 _rentalPerDay,
                 _minRentDays,
                 _rentableUntil,
-                uint32(block.timestamp)
+                uint32(block.timestamp),
+                _enableRenting
             );
 
             emit Staked(tokenId, stakeTo);
+        }
+    }
+
+    // Set Renting while staking
+    function setRenting(uint256[] calldata tokenIds, bool _enableRenting)
+        external
+        virtual
+        override
+        nonReentrant
+    {
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            uint256 tokenId = tokenIds[i];
+            StakeInformation storage stakeInfo_ = stakeInformation[tokenId];
+            stakeInfo_.enableRenting = _enableRenting;
         }
     }
 
@@ -79,16 +95,13 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
     // setting rentableUntil to 0 makes the world unrentable.
     function updateRent(
         uint256[] calldata tokenIds,
-        uint16 _deposit,
-        uint16 _rentalPerDay,
+        uint256 _deposit,
+        uint256 _rentalPerDay,
         uint16 _minRentDays,
-        uint32 _rentableUntil
+        uint32 _rentableUntil,
+        bool _enableRenting
     ) external virtual override {
-        require(
-            uint256(_deposit) <=
-                uint256(_rentalPerDay) * (uint256(_minRentDays) + 1),
-            "ER"
-        ); // ER: Rental rate incorrect
+        require(_deposit <= _rentalPerDay * (uint256(_minRentDays) + 1), "ER"); // ER: Rental rate incorrect
 
         require(
             _rentableUntil >=
@@ -98,20 +111,19 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
 
         for (uint256 i = 0; i < tokenIds.length; i++) {
             uint256 tokenId = tokenIds[i];
-            StakeInformation storage stakeInformation_ = stakeInformation[
-                tokenId
-            ];
+            StakeInformation storage stakeInfo_ = stakeInformation[tokenId];
             require(
                 NFT_ERC721.ownerOf(tokenId) == address(this) &&
-                    stakeInformation_.owner == _msgSender(),
+                    stakeInfo_.owner == _msgSender(),
                 "E9"
             ); // E9: Not your world
             require(!NFT_RENTAL.isRentActive(tokenId), "EB"); // EB: Ongoing rent
 
-            stakeInformation_.deposit = _deposit;
-            stakeInformation_.rentalPerDay = _rentalPerDay;
-            stakeInformation_.minRentDays = _minRentDays;
-            stakeInformation_.rentableUntil = _rentableUntil;
+            stakeInfo_.deposit = _deposit;
+            stakeInfo_.rentalPerDay = _rentalPerDay;
+            stakeInfo_.minRentDays = _minRentDays;
+            stakeInfo_.rentableUntil = _rentableUntil;
+            stakeInfo_.enableRenting = _enableRenting;
         }
     }
 
@@ -121,28 +133,27 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
         virtual
         override
     {
-        StakeInformation storage stakeInformation_ = stakeInformation[tokenId];
+        StakeInformation storage stakeInfo_ = stakeInformation[tokenId];
         require(
             NFT_ERC721.ownerOf(tokenId) == address(this) &&
-                stakeInformation_.owner == _msgSender(),
+                stakeInfo_.owner == _msgSender(),
             "E9"
         ); // E9: Not your world
         require(
             _rentableUntil >=
-                block.timestamp +
-                    (uint256(stakeInformation_.minRentDays) * 1 days),
+                block.timestamp + (uint256(stakeInfo_.minRentDays) * 1 days),
             "ET"
         ); // ET: Rentable until atleast minRentDays
-        stakeInformation_.rentableUntil = _rentableUntil;
+        stakeInfo_.rentableUntil = _rentableUntil;
     }
 
+    // Unstake tokens and remove rental
     function unstake(uint256[] calldata tokenIds, address unstakeTo)
         external
         virtual
         override
         nonReentrant
     {
-        // ensure unstakeTo is EOA or ERC721Receiver to avoid token lockup
         _ensureEOAorERC721Receiver(unstakeTo);
         require(unstakeTo != address(this), "ES"); // ES: Unstake to escrow
 
@@ -157,15 +168,20 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
                 0,
                 0,
                 0,
-                0
+                0,
+                false
             );
-
             emit Unstaked(tokenId, _msgSender());
         }
     }
 
-    // ======== View only functions ========
+    /**
+    ////////////////////////////////////////////////////
+    // View only functions
+    ///////////////////////////////////////////////////
+     */
 
+    // Get stake information
     function getStakeInformation(uint256 tokenId)
         external
         view
@@ -175,6 +191,21 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
         return stakeInformation[tokenId];
     }
 
+    // Get owner of the staking tokens
+    function getOriginalOwner(uint256 tokenId)
+        external
+        view
+        override
+        returns (address)
+    {
+        if (NFT_ERC721.ownerOf(tokenId) == address(this)) {
+            return stakeInformation[tokenId].owner;
+        }
+
+        return NFT_ERC721.ownerOf(tokenId);
+    }
+
+    // Get stake duration information
     function getStakingDuration(uint256 tokenId)
         external
         view
@@ -187,6 +218,7 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
         return block.timestamp - stakeInformation[tokenId].stakedFrom;
     }
 
+    // Get if the stake is active or inactive
     function isStakeActive(uint256 tokenId)
         public
         view
@@ -196,6 +228,11 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
         return stakeInformation[tokenId].owner != address(0);
     }
 
+    /**
+    ////////////////////////////////////////////////////
+    // Internal Functions 
+    ///////////////////////////////////////////////////
+     */
     function supportsInterface(bytes4 interfaceId)
         public
         view
@@ -223,8 +260,6 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
             return 0x00000000;
         }
     }
-
-    // ======== internal functions ========
 
     function _ensureEOAorERC721Receiver(address to) internal virtual {
         uint32 size;

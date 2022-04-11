@@ -19,7 +19,7 @@ interface INFTRental is IERC165 {
     struct RentInformation {
         address tenant; // rented to, otherwise tenant == 0
         uint32 rentStartTime; // timestamp in unix epoch
-        uint32 rentalPaid; // total rental paid since the beginning including the deposit
+        uint256 rentalPaid; // total rental paid since the beginning including the deposit
     }
 
     function isRentActive(uint256 tokenId) external view returns (bool);
@@ -43,9 +43,9 @@ interface INFTRental is IERC165 {
         view
         returns (uint256 paidUntil);
 
-    function startRent(uint256 tokenId, uint32 initialPayment) external;
+    function startRent(uint256 tokenId, uint256 initialPayment) external;
 
-    function payRent(uint256 tokenId, uint32 payment) external;
+    function payRent(uint256 tokenId, uint256 payment) external;
 
     function terminateRent(uint256 tokenId) external;
 }
