@@ -27,10 +27,10 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
     ///////////////////////////////////////////////////
      */
     constructor(address tokenAddress, INFTStaking stakingAddress) {
-        require(tokenAddress != address(0), "E0"); // E0: addr err
+        require(tokenAddress != address(0), "INVALID_TOKEN_ADDRESS");
         require(
             stakingAddress.supportsInterface(type(INFTStaking).interfaceId),
-            "E0"
+            "INVALID_STAKING_ADDRESS"
         );
         ERC20_TOKEN_ADDRESS = tokenAddress;
         NFTStaking = stakingAddress;
@@ -57,29 +57,29 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
         INFTStaking.StakeInformation memory stakeInfo_ = NFTStaking
             .getStakeInformation(tokenId);
         RentInformation memory rentInformation_ = rentInformation[tokenId];
-        require(stakeInfo_.owner != address(0), "EN"); // EN: Not staked
-        require(stakeInfo_.enableRenting == true, "ERN"); // ERN: Renting not enabled
+        require(stakeInfo_.owner != address(0), "NOT_STAKED");
+        require(stakeInfo_.enableRenting == true, "RENT_DISABLED");
         require(
             uint256(stakeInfo_.rentableUntil) >=
-                block.timestamp + stakeInfo_.minRentDays * 86400,
-            "EC"
-        ); // EC: Not available
+                block.timestamp + stakeInfo_.minRentDays * (1 days),
+            "NOT_AVAILABLE"
+        );
         if (rentInformation_.tenant != address(0)) {
             // if previously rented
             uint256 paidUntil = rentalPaidUntil(tokenId);
-            require(paidUntil < block.timestamp, "EB"); // EB: Ongoing rent
+            require(paidUntil < block.timestamp, "ACTIVE_RENT");
         }
         // should pay at least deposit + 1 day of rent
         require(
             initialPayment >= (stakeInfo_.deposit + stakeInfo_.rentalPerDay),
-            "ED"
-        ); // ED: Payment insufficient
+            "INSUFFICENT_PAYMENT"
+        );
         // prevent the user from paying too much
         // block.timestamp casts it into uint256 which is desired
         // if the rentable time left is less than minRentDays then the tenant just has to pay up until the time limit
         uint256 paymentAmount = Math.min(
             ((stakeInfo_.rentableUntil - block.timestamp) *
-                stakeInfo_.rentalPerDay) / 86400,
+                stakeInfo_.rentalPerDay) / (1 days),
             initialPayment
         );
         rentInformation_.tenant = _msgSender();
@@ -111,13 +111,13 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
         INFTStaking.StakeInformation memory stakeInfo_ = NFTStaking
             .getStakeInformation(tokenId);
         RentInformation memory rentInformation_ = rentInformation[tokenId];
-        require(rentInformation_.tenant == _msgSender(), "EE"); // EE: Not rented
+        require(rentInformation_.tenant == _msgSender(), "NOT_RENTED");
         // prevent the user from paying too much
         uint256 paymentAmount = Math.min(
             (uint256(
                 stakeInfo_.rentableUntil - rentInformation_.rentStartTime
             ) * stakeInfo_.rentalPerDay) /
-                86400 -
+                (1 days) -
                 rentInformation_.rentalPaid,
             payment
         );
@@ -138,10 +138,10 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
     function terminateRent(uint256 tokenId) external virtual override {
         require(
             NFTStaking.getStakeInformation(tokenId).owner == _msgSender(),
-            "E9"
-        ); // E9: Not your nft
+            "NFT_NOT_OWNED"
+        );
         uint256 paidUntil = rentalPaidUntil(tokenId);
-        require(paidUntil < block.timestamp, "EB"); // EB: Ongoing rent
+        require(paidUntil < block.timestamp, "ACTIVE_RENT");
         address tenant = rentInformation[tokenId].tenant;
         emit RentTerminated(tokenId, tenant);
         rentCount[tenant]--;
@@ -180,7 +180,7 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
         override
         returns (uint256)
     {
-        require(index < rentCount[tenant], "EI"); // EI: index out of bounds
+        require(index < rentCount[tenant], "INDEX_OUT_OF_BOUND");
         return _rentedItems[tenant][index];
     }
 
@@ -197,7 +197,7 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
         state =
             (stakeInfo_.owner != address(0)) &&
             (uint256(stakeInfo_.rentableUntil) >=
-                block.timestamp + stakeInfo_.minRentDays * 86400);
+                block.timestamp + stakeInfo_.minRentDays * (1 days));
         if (rentInformation_.tenant != address(0)) {
             // if previously rented
             uint256 paidUntil = rentalPaidUntil(tokenId);
@@ -220,10 +220,10 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
             paidUntil = stakeInfo_.rentableUntil;
         } else {
             uint256 rentalPaidSeconds = (uint256(rentInformation_.rentalPaid) *
-                86400) / stakeInfo_.rentalPerDay;
+                (1 days)) / stakeInfo_.rentalPerDay;
             bool fundExceedsMin = rentalPaidSeconds >=
                 Math.max(
-                    stakeInfo_.minRentDays * 86400,
+                    stakeInfo_.minRentDays * (1 days),
                     block.timestamp - rentInformation_.rentStartTime
                 );
             paidUntil =
@@ -232,7 +232,7 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
                 (
                     fundExceedsMin
                         ? 0
-                        : (uint256(stakeInfo_.deposit) * 86400) /
+                        : (uint256(stakeInfo_.deposit) * (1 days)) /
                             stakeInfo_.rentalPerDay
                 );
         }

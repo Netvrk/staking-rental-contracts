@@ -237,7 +237,7 @@ describe("NFT World Staking & Rental", function () {
     expect(oldPeriod).to.not.equal(newPeriod);
   });
 
-  it("Can pay rent daily before stake expiry. Cant pay after rent is terminated.", async function () {
+  it("Can pay rent daily before stake expires. Cant pay after rent is terminated.", async function () {
     await rental.terminateRent(1);
     await staking.unstake([1], ownerAddress);
 
