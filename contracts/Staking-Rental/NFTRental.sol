@@ -26,19 +26,19 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
     // Admin Functions 
     ///////////////////////////////////////////////////
      */
-    constructor(address tokenAddress, INFTStaking stakingAddress) {
-        require(tokenAddress != address(0), "INVALID_TOKEN_ADDRESS");
+    constructor(address _tokenAddress, INFTStaking _stakingAddress) {
+        require(_tokenAddress != address(0), "INVALID_TOKEN_ADDRESS");
         require(
-            stakingAddress.supportsInterface(type(INFTStaking).interfaceId),
+            _stakingAddress.supportsInterface(type(INFTStaking).interfaceId),
             "INVALID_STAKING_ADDRESS"
         );
-        ERC20_TOKEN_ADDRESS = tokenAddress;
-        NFTStaking = stakingAddress;
+        ERC20_TOKEN_ADDRESS = _tokenAddress;
+        NFTStaking = _stakingAddress;
     }
 
     // Rescue ERC20 tokens sent directly to this contract
-    function rescueERC20(address token, uint256 amount) external onlyOwner {
-        TransferHelper.safeTransfer(token, _msgSender(), amount);
+    function rescueERC20(address _token, uint256 _amount) external onlyOwner {
+        TransferHelper.safeTransfer(_token, _msgSender(), _amount);
     }
 
     /**
@@ -48,15 +48,15 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
      */
 
     // Start the rent to a staked token
-    function startRent(uint256 tokenId, uint256 initialPayment)
+    function startRent(uint256 _tokenId, uint256 _initialPayment)
         external
         virtual
         override
         nonReentrant
     {
         INFTStaking.StakeInformation memory stakeInfo_ = NFTStaking
-            .getStakeInformation(tokenId);
-        RentInformation memory rentInformation_ = rentInformation[tokenId];
+            .getStakeInformation(_tokenId);
+        RentInformation memory rentInformation_ = rentInformation[_tokenId];
         require(stakeInfo_.owner != address(0), "NOT_STAKED");
         require(stakeInfo_.enableRenting == true, "RENT_DISABLED");
         require(
@@ -66,12 +66,12 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
         );
         if (rentInformation_.tenant != address(0)) {
             // if previously rented
-            uint256 paidUntil = rentalPaidUntil(tokenId);
+            uint256 paidUntil = rentalPaidUntil(_tokenId);
             require(paidUntil < block.timestamp, "ACTIVE_RENT");
         }
         // should pay at least deposit + 1 day of rent
         require(
-            initialPayment >= (stakeInfo_.deposit + stakeInfo_.rentalPerDay),
+            _initialPayment >= (stakeInfo_.deposit + stakeInfo_.rentalPerDay),
             "INSUFFICENT_PAYMENT"
         );
         // prevent the user from paying too much
@@ -80,7 +80,7 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
         uint256 paymentAmount = Math.min(
             ((stakeInfo_.rentableUntil - block.timestamp) *
                 stakeInfo_.rentalPerDay) / (1 days),
-            initialPayment
+            _initialPayment
         );
         rentInformation_.tenant = _msgSender();
         rentInformation_.rentStartTime = block.timestamp.toUint32();
@@ -91,26 +91,26 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
             stakeInfo_.owner,
             paymentAmount
         );
-        rentInformation[tokenId] = rentInformation_;
+        rentInformation[_tokenId] = rentInformation_;
         uint256 count = rentCount[_msgSender()];
-        _rentedItems[_msgSender()][count] = tokenId;
-        _rentedItemsIndex[tokenId] = count;
+        _rentedItems[_msgSender()][count] = _tokenId;
+        _rentedItemsIndex[_tokenId] = count;
         rentCount[_msgSender()]++;
-        emit Rented(tokenId, _msgSender(), paymentAmount);
+        emit Rented(_tokenId, _msgSender(), paymentAmount);
     }
 
     // Used by tenant to pay rent in advance. As soon as the tenant defaults the renter can vacate the tenant
     // The rental period can be extended as long as rent is prepaid, up to rentableUntil timestamp.
     // payment unit in ether
-    function payRent(uint256 tokenId, uint256 payment)
+    function payRent(uint256 _tokenId, uint256 _payment)
         external
         virtual
         override
         nonReentrant
     {
         INFTStaking.StakeInformation memory stakeInfo_ = NFTStaking
-            .getStakeInformation(tokenId);
-        RentInformation memory rentInformation_ = rentInformation[tokenId];
+            .getStakeInformation(_tokenId);
+        RentInformation memory rentInformation_ = rentInformation[_tokenId];
         require(rentInformation_.tenant == _msgSender(), "NOT_RENTED");
         // prevent the user from paying too much
         uint256 paymentAmount = Math.min(
@@ -119,7 +119,7 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
             ) * stakeInfo_.rentalPerDay) /
                 (1 days) -
                 rentInformation_.rentalPaid,
-            payment
+            _payment
         );
         rentInformation_.rentalPaid += paymentAmount;
         TransferHelper.safeTransferFrom(
@@ -128,25 +128,25 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
             stakeInfo_.owner,
             paymentAmount
         );
-        rentInformation[tokenId] = rentInformation_;
-        emit RentPaid(tokenId, _msgSender(), paymentAmount);
+        rentInformation[_tokenId] = rentInformation_;
+        emit RentPaid(_tokenId, _msgSender(), paymentAmount);
     }
 
     // Used by renter to vacate tenant in case of default, or when rental period expires.
     // If payment + deposit covers minRentDays then deposit can be used as rent. Otherwise rent has to be provided in addition to the deposit.
     // If rental period is shorter than minRentDays then deposit will be forfeited.
-    function terminateRent(uint256 tokenId) external virtual override {
+    function terminateRent(uint256 _tokenId) external virtual override {
         require(
-            NFTStaking.getStakeInformation(tokenId).owner == _msgSender(),
+            NFTStaking.getStakeInformation(_tokenId).owner == _msgSender(),
             "NFT_NOT_OWNED"
         );
-        uint256 paidUntil = rentalPaidUntil(tokenId);
+        uint256 paidUntil = rentalPaidUntil(_tokenId);
         require(paidUntil < block.timestamp, "ACTIVE_RENT");
-        address tenant = rentInformation[tokenId].tenant;
-        emit RentTerminated(tokenId, tenant);
+        address tenant = rentInformation[_tokenId].tenant;
+        emit RentTerminated(_tokenId, tenant);
         rentCount[tenant]--;
         uint256 lastIndex = rentCount[tenant];
-        uint256 tokenIndex = _rentedItemsIndex[tokenId];
+        uint256 tokenIndex = _rentedItemsIndex[_tokenId];
         // swap and purge if not the last one
         if (tokenIndex != lastIndex) {
             uint256 lastTokenId = _rentedItems[tenant][lastIndex];
@@ -154,10 +154,10 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
             _rentedItems[tenant][tokenIndex] = lastTokenId; // Move the last token to the slot of the to-delete token
             _rentedItemsIndex[lastTokenId] = tokenIndex;
         }
-        delete _rentedItemsIndex[tokenId];
+        delete _rentedItemsIndex[_tokenId];
         delete _rentedItems[tenant][tokenIndex];
 
-        rentInformation[tokenId] = RentInformation(address(0), 0, 0);
+        rentInformation[_tokenId] = RentInformation(address(0), 0, 0);
     }
 
     /**
@@ -165,26 +165,36 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
     // View Only Functions 
     ///////////////////////////////////////////////////
      */
-    function isRentActive(uint256 tokenId) public view override returns (bool) {
-        return rentInformation[tokenId].tenant != address(0);
+    function isRentActive(uint256 _tokenId)
+        public
+        view
+        override
+        returns (bool)
+    {
+        return rentInformation[_tokenId].tenant != address(0);
     }
 
-    function getTenant(uint256 tokenId) public view override returns (address) {
-        return rentInformation[tokenId].tenant;
+    function getTenant(uint256 _tokenId)
+        public
+        view
+        override
+        returns (address)
+    {
+        return rentInformation[_tokenId].tenant;
     }
 
-    function rentByIndex(address tenant, uint256 index)
+    function rentByIndex(address _tenant, uint256 _index)
         public
         view
         virtual
         override
         returns (uint256)
     {
-        require(index < rentCount[tenant], "INDEX_OUT_OF_BOUND");
-        return _rentedItems[tenant][index];
+        require(_index < rentCount[_tenant], "INDEX_OUT_OF_BOUND");
+        return _rentedItems[_tenant][_index];
     }
 
-    function isRentable(uint256 tokenId)
+    function isRentable(uint256 _tokenId)
         external
         view
         virtual
@@ -192,21 +202,21 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
         returns (bool state)
     {
         INFTStaking.StakeInformation memory stakeInfo_ = NFTStaking
-            .getStakeInformation(tokenId);
-        RentInformation memory rentInformation_ = rentInformation[tokenId];
+            .getStakeInformation(_tokenId);
+        RentInformation memory rentInformation_ = rentInformation[_tokenId];
         state =
             (stakeInfo_.owner != address(0)) &&
             (uint256(stakeInfo_.rentableUntil) >=
                 block.timestamp + stakeInfo_.minRentDays * (1 days));
         if (rentInformation_.tenant != address(0)) {
             // if previously rented
-            uint256 paidUntil = rentalPaidUntil(tokenId);
+            uint256 paidUntil = rentalPaidUntil(_tokenId);
             state = state && (paidUntil < block.timestamp);
         }
     }
 
     // Get rental amount paid until now
-    function rentalPaidUntil(uint256 tokenId)
+    function rentalPaidUntil(uint256 _tokenId)
         public
         view
         virtual
@@ -214,8 +224,8 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
         returns (uint256 paidUntil)
     {
         INFTStaking.StakeInformation memory stakeInfo_ = NFTStaking
-            .getStakeInformation(tokenId);
-        RentInformation memory rentInformation_ = rentInformation[tokenId];
+            .getStakeInformation(_tokenId);
+        RentInformation memory rentInformation_ = rentInformation[_tokenId];
         if (stakeInfo_.rentalPerDay == 0) {
             paidUntil = stakeInfo_.rentableUntil;
         } else {
@@ -239,13 +249,13 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
     }
 
     // Get rent information
-    function getRentInformation(uint256 tokenId)
+    function getRentInformation(uint256 _tokenId)
         external
         view
         override
         returns (RentInformation memory)
     {
-        return rentInformation[tokenId];
+        return rentInformation[_tokenId];
     }
 
     /**

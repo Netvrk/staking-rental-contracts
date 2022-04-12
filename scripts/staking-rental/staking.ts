@@ -6,14 +6,14 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const nft = "0xC88E18F8bc3f6F4CbA55e14439780563039ED4d5";
+  const nft = "0xF5B84B4F60F47616e79d7a46d43706B90AdD1e56";
 
   const NFTStaking = await ethers.getContractFactory("NFTStaking");
-  const escrow = await NFTStaking.deploy(nft);
+  const staking = await NFTStaking.deploy(nft);
 
-  await escrow.deployed();
+  await staking.deployed();
 
-  console.log("NFTStaking deployed to:", escrow.address);
+  console.log("NFTStaking deployed to:", staking.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

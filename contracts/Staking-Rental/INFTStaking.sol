@@ -18,20 +18,20 @@ interface INFTStaking is IERC165, IERC721Receiver {
         bool enableRenting; // enable/disable renting
     }
 
-    function getOriginalOwner(uint256 tokenId) external view returns (address);
+    function getOriginalOwner(uint256 _tokenId) external view returns (address);
 
     // view functions
-    function getStakeInformation(uint256 tokenId)
+    function getStakeInformation(uint256 _tokenId)
         external
         view
         returns (StakeInformation memory);
 
-    function getStakingDuration(uint256 tokenId)
+    function getStakingDuration(uint256 _tokenId)
         external
         view
         returns (uint256);
 
-    function isStakeActive(uint256 tokenId) external view returns (bool);
+    function isStakeActive(uint256 _tokenId) external view returns (bool);
 
     function onERC721Received(
         address,
@@ -41,19 +41,17 @@ interface INFTStaking is IERC165, IERC721Receiver {
     ) external view override returns (bytes4);
 
     function stake(
-        uint256[] calldata tokenIds,
-        address stakeTo,
+        uint256[] calldata _tokenIds,
+        address _stakeTo,
         uint256 _deposit,
         uint256 _rentalPerDay,
         uint16 _minRentDays,
         uint32 _rentableUntil,
         bool _enableRent
     ) external;
-
-    function setRenting(uint256[] calldata tokenIds, bool _enableRent) external;
 
     function updateRent(
-        uint256[] calldata tokenIds,
+        uint256[] calldata _tokenIds,
         uint256 _deposit,
         uint256 _rentalPerDay,
         uint16 _minRentDays,
@@ -61,8 +59,8 @@ interface INFTStaking is IERC165, IERC721Receiver {
         bool _enableRent
     ) external;
 
-    function extendRentalPeriod(uint256 tokenId, uint32 _rentableUntil)
+    function extendRentalPeriod(uint256 _tokenId, uint32 _rentableUntil)
         external;
 
-    function unstake(uint256[] calldata tokenIds, address unstakeTo) external;
+    function unstake(uint256[] calldata _tokenIds, address _unstakeTo) external;
 }
