@@ -1,32 +1,37 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 
-import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "./TransferHelper.sol";
 import "./INFTStaking.sol";
 import "./INFTRental.sol";
 
-contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
+contract NFTRental is
+    Context,
+    INFTRental,
+    Ownable,
+    ReentrancyGuard,
+    ERC721Enumerable
+{
     using SafeCast for uint256;
 
     address private immutable ERC20_TOKEN_ADDRESS;
     INFTStaking private immutable NFTStaking;
     mapping(uint256 => RentInformation) private rentInformation;
-    mapping(address => uint256) public rentCount; // count of rented nfts per tenant
-    mapping(address => mapping(uint256 => uint256)) private _rentedItems; // enumerate rented nfts per tenant
-    mapping(uint256 => uint256) private _rentedItemsIndex; // tokenId to index in _rentedItems[tenant]
 
     /**
     ////////////////////////////////////////////////////
     // Admin Functions 
     ///////////////////////////////////////////////////
      */
-    constructor(address _tokenAddress, INFTStaking _stakingAddress) {
+    constructor(address _tokenAddress, INFTStaking _stakingAddress)
+        ERC721("Rental", "RNTL")
+    {
         require(_tokenAddress != address(0), "INVALID_TOKEN_ADDRESS");
         require(
             _stakingAddress.supportsInterface(type(INFTStaking).interfaceId),
@@ -92,10 +97,8 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
             paymentAmount
         );
         rentInformation[_tokenId] = rentInformation_;
-        uint256 count = rentCount[_msgSender()];
-        _rentedItems[_msgSender()][count] = _tokenId;
-        _rentedItemsIndex[_tokenId] = count;
-        rentCount[_msgSender()]++;
+
+        _safeMint(_msgSender(), _tokenId);
         emit Rented(_tokenId, _msgSender(), paymentAmount);
     }
 
@@ -143,21 +146,10 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
         uint256 paidUntil = rentalPaidUntil(_tokenId);
         require(paidUntil < block.timestamp, "ACTIVE_RENT");
         address tenant = rentInformation[_tokenId].tenant;
-        emit RentTerminated(_tokenId, tenant);
-        rentCount[tenant]--;
-        uint256 lastIndex = rentCount[tenant];
-        uint256 tokenIndex = _rentedItemsIndex[_tokenId];
-        // swap and purge if not the last one
-        if (tokenIndex != lastIndex) {
-            uint256 lastTokenId = _rentedItems[tenant][lastIndex];
-
-            _rentedItems[tenant][tokenIndex] = lastTokenId; // Move the last token to the slot of the to-delete token
-            _rentedItemsIndex[lastTokenId] = tokenIndex;
-        }
-        delete _rentedItemsIndex[_tokenId];
-        delete _rentedItems[tenant][tokenIndex];
 
         rentInformation[_tokenId] = RentInformation(address(0), 0, 0);
+        _burn(_tokenId);
+        emit RentTerminated(_tokenId, tenant);
     }
 
     /**
@@ -172,26 +164,6 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
         returns (bool)
     {
         return rentInformation[_tokenId].tenant != address(0);
-    }
-
-    function getTenant(uint256 _tokenId)
-        public
-        view
-        override
-        returns (address)
-    {
-        return rentInformation[_tokenId].tenant;
-    }
-
-    function rentByIndex(address _tenant, uint256 _index)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
-        require(_index < rentCount[_tenant], "INDEX_OUT_OF_BOUND");
-        return _rentedItems[_tenant][_index];
     }
 
     function isRentable(uint256 _tokenId)
@@ -264,11 +236,20 @@ contract NFTRental is Context, ERC165, INFTRental, Ownable, ReentrancyGuard {
     ///////////////////////////////////////////////////
      */
 
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override {
+        require(from == address(0) || to == address(0), "TRANSFER_LOCKED");
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
     function supportsInterface(bytes4 interfaceId)
         public
         view
         virtual
-        override(ERC165, IERC165)
+        override(ERC721Enumerable, IERC165)
         returns (bool)
     {
         return

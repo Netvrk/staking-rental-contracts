@@ -24,17 +24,10 @@ interface INFTRental is IERC165 {
 
     function isRentActive(uint256 _tokenId) external view returns (bool);
 
-    function getTenant(uint256 _tokenId) external view returns (address);
-
     function getRentInformation(uint256 _tokenId)
         external
         view
         returns (RentInformation memory);
-
-    function rentByIndex(address _tenant, uint256 _index)
-        external
-        view
-        returns (uint256);
 
     function isRentable(uint256 _tokenId) external view returns (bool state);
 
