@@ -16,7 +16,6 @@ npx hardhat run scripts/deploy.ts
 - Staking: 0x24371B215Cc99D15dc8DdDe4D428e87965E005af
 - Rental: 0xa267C8f411B4482Fa87eE29DFc8b032AbfB29e9F
 
-
 ## Smart Contracts - NFT Style (Ropsten)
 
 - NFT: 0x2A86dcdBB35706C2718050C7Cbc9C1f1620d6ba0
