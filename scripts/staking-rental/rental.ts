@@ -1,8 +1,8 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const token = "0x75195E6e635e2ca8DB104FE9D184f334ee89c7b3";
-  const staking = "0x24371B215Cc99D15dc8DdDe4D428e87965E005af";
+  const token = "0x411caE8A9e0FBecdd7cEE35188c4706fF3DA2598";
+  const staking = "0x375D32959D3a55Abd7d50Ed297D07EA2a25e3dab";
 
   const NFTRental = await ethers.getContractFactory("NFTRental");
   const rental = await NFTRental.deploy(token, staking);

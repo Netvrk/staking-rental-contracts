@@ -1,13 +1,13 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const NRGY = await ethers.getContractFactory("NRGY");
+  const VRK = await ethers.getContractFactory("VRK");
 
-  const nrgy = await NRGY.deploy();
+  const vrk = await VRK.deploy();
 
-  await nrgy.deployed();
+  await vrk.deployed();
 
-  console.log("NRGY deployed to:", nrgy.address);
+  console.log("VRK deployed to:", vrk.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

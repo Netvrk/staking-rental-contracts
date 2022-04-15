@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 
-import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -9,8 +8,15 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "./INFTStaking.sol";
 import "./INFTRental.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
-contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
+contract NFTStaking is
+    Context,
+    INFTStaking,
+    Ownable,
+    ReentrancyGuard,
+    ERC721Enumerable
+{
     using SafeCast for uint256;
 
     IERC721 immutable NFT_ERC721;
@@ -22,7 +28,7 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
     // Admin Functions 
     ///////////////////////////////////////////////////
      */
-    constructor(address _nftAddress) {
+    constructor(address _nftAddress) ERC721("Staking", "STK") {
         require(_nftAddress != address(0), "INVALID_NFT_ADDRESS");
         NFT_ERC721 = IERC721(_nftAddress);
     }
@@ -78,6 +84,8 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
                 uint32(block.timestamp),
                 _enableRenting
             );
+
+            _safeMint(_stakeTo, tokenId);
 
             emit Staked(tokenId, _stakeTo);
         }
@@ -169,6 +177,8 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
                 0,
                 false
             );
+
+            _burn(tokenId);
             emit Unstaked(tokenId, _msgSender());
         }
     }
@@ -223,7 +233,9 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
         override
         returns (bool)
     {
-        return stakeInformation[_tokenId].owner != address(0);
+        return
+            stakeInformation[_tokenId].owner != address(0) &&
+            ownerOf(_tokenId) != address(0);
     }
 
     /**
@@ -231,17 +243,6 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
     // Internal Functions 
     ///////////////////////////////////////////////////
      */
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(ERC165, IERC165)
-        returns (bool)
-    {
-        return
-            interfaceId == type(INFTStaking).interfaceId ||
-            super.supportsInterface(interfaceId);
-    }
 
     function onERC721Received(
         address operator,
@@ -281,5 +282,26 @@ contract NFTStaking is Context, INFTStaking, ERC165, Ownable, ReentrancyGuard {
                 revert("INVALID_RECEIVER");
             }
         }
+    }
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override {
+        require(from == address(0) || to == address(0), "TRANSFER_LOCKED");
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC721Enumerable, IERC165)
+        returns (bool)
+    {
+        return
+            interfaceId == type(INFTStaking).interfaceId ||
+            super.supportsInterface(interfaceId);
     }
 }
