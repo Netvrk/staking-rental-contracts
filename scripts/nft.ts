@@ -5,7 +5,7 @@ async function main() {
   const nft = await nftContract.deploy(
     "XYZ",
     "XYZ",
-    "https://www.example.com/"
+    "https://api.netvrk.co/api/items/"
   );
   await nft.deployed();
 

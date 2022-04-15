@@ -233,7 +233,9 @@ contract NFTStaking is
         override
         returns (bool)
     {
-        return stakeInformation[_tokenId].owner != address(0);
+        return
+            stakeInformation[_tokenId].owner != address(0) &&
+            ownerOf(_tokenId) != address(0);
     }
 
     /**

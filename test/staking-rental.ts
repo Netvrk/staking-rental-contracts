@@ -191,8 +191,8 @@ describe("NFT World Staking & Rental", function () {
 
     expect(await rental.isRentActive(0), "true");
     expect(await rental.isRentActive(1), "true");
-    expect(await rental.getTenant(0), userAddress);
-    expect(await rental.getTenant(1), userAddress);
+    expect(await rental.ownerOf(0), userAddress);
+    expect(await rental.ownerOf(1), userAddress);
   });
 
   it("Terminate rent after two days to update information", async function () {

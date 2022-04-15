@@ -163,7 +163,9 @@ contract NFTRental is
         override
         returns (bool)
     {
-        return rentInformation[_tokenId].tenant != address(0);
+        return
+            rentInformation[_tokenId].tenant != address(0) &&
+            ownerOf(_tokenId) != address(0);
     }
 
     function isRentable(uint256 _tokenId)
