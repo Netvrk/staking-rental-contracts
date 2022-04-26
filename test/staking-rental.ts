@@ -1,11 +1,11 @@
 import { expect } from "chai";
 import { Signer } from "ethers";
 import { ethers, network } from "hardhat";
-import { NFT, NFTStaking, NFTRental, NRGY } from "../typechain-types";
+import { NFT, NFTStaking, NFTRental, VRK } from "../typechain-types";
 
 describe("NFT World Staking & Rental", function () {
   let nft: NFT;
-  let token: NRGY;
+  let token: VRK;
   let staking: NFTStaking;
   let rental: NFTRental;
   let owner: Signer;
@@ -34,8 +34,8 @@ describe("NFT World Staking & Rental", function () {
     expect(await nft.totalSupply()).to.equal(0);
   });
 
-  it("Deploy NRGY token.", async function () {
-    const tokenContract = await ethers.getContractFactory("NRGY");
+  it("Deploy VRK token.", async function () {
+    const tokenContract = await ethers.getContractFactory("VRK");
     token = await tokenContract.deploy();
     await token.deployed();
     const ownerBalance = await token.balanceOf(ownerAddress);
