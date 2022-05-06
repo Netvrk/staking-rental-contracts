@@ -15,6 +15,7 @@ interface INFTStaking is IERC165, IERC721Receiver {
         uint16 minRentDays; // must rent for at least min rent days, otherwise deposit is forfeited up to this amount
         uint32 rentableUntil; // timestamp in unix epoch
         uint32 stakedFrom; // staked from timestamp
+        uint32 lockUntil; // lock staking
         bool enableRenting; // enable/disable renting
     }
 

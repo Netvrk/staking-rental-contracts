@@ -70,6 +70,10 @@ describe("NFT World Staking & Rental", function () {
     await nft.mintItem(userAddress, 4);
     await nft.mintItem(userAddress, 5);
 
+    await nft.mintItem(ownerAddress, 10);
+    await nft.mintItem(ownerAddress, 11);
+    await nft.mintItem(ownerAddress, 12);
+
     const userBalance = parseInt((await nft.balanceOf(userAddress)).toString());
     const ownerBalance = parseInt(
       (await nft.balanceOf(ownerAddress)).toString()
@@ -120,55 +124,17 @@ describe("NFT World Staking & Rental", function () {
     expect(await staking.isStakeActive(2), "true");
   });
 
-  it("Owner unstakes [2] NFTs to owner", async function () {
-    expect(await staking.isStakeActive(2), "true");
-    await staking.unstake([2], ownerAddress);
-
-    expect(await staking.isStakeActive(2), "false");
-  });
-
-  it("Owner stakes and unstakes [2] NFTs to user", async function () {
-    const nextDay = now + 86400 * 2;
-    expect(await nft.ownerOf(2), ownerAddress);
-    await staking.stake(
-      [2],
-      ownerAddress,
-      getWei(20),
-      getWei(50),
-      1,
-      nextDay,
-      true
-    );
-    expect(await staking.isStakeActive(2), "true");
-    await staking.unstake([2], userAddress);
-
-    expect(await staking.isStakeActive(2), "false");
-    expect(await nft.ownerOf(2), userAddress);
-  });
-
-  it("Owner stakes [2] NFTs with rental disabled and it shouldn't be able to rent", async function () {
+  it("Owner stakes [3] NFTs with rental disabled and it shouldn't be able to rent", async function () {
     const nextDay = now + 86400 * 2;
     await staking
       .connect(user)
-      .stake([2], userAddress, getWei(20), getWei(50), 1, nextDay, false);
+      .stake([3], userAddress, getWei(20), getWei(50), 1, nextDay, false);
 
-    expect(await staking.isStakeActive(2), "true");
-    await expect(rental.startRent(2, getWei(100))).to.be.reverted;
-    await staking.connect(user).unstake([2], ownerAddress);
+    expect(await staking.isStakeActive(3), "true");
+    await expect(rental.startRent(3, getWei(100))).to.be.reverted;
   });
 
-  it("Owner stakes [2] NFTs & User pays rent until stake expires (MAX)", async function () {
-    const nextDay = now + 86400 * 2;
-    await staking.stake(
-      [2],
-      ownerAddress,
-      getWei(20),
-      getWei(50),
-      1,
-      nextDay,
-      true
-    );
-
+  it("User pays rent until stake expires (MAX) to NFT [2]", async function () {
     // Pay less (only deposit)
     await expect(rental.connect(user).startRent(2, getWei(20))).to.be.reverted;
     // Pay high
@@ -222,11 +188,6 @@ describe("NFT World Staking & Rental", function () {
     expect(oldData.deposit.toString()).to.not.equal(newData.deposit.toString());
   });
 
-  it("Unstake [0] NFTs", async function () {
-    await staking.unstake([0], ownerAddress);
-    expect(await staking.getStakingDuration(0), "0");
-  });
-
   it("Extend rental period while rent is active", async function () {
     expect(await rental.isRentActive(1), "true");
     // Extend
@@ -239,11 +200,10 @@ describe("NFT World Staking & Rental", function () {
 
   it("Can pay rent daily before stake expires. Cant pay after rent is terminated.", async function () {
     await rental.terminateRent(1);
-    await staking.unstake([1], ownerAddress);
 
     const nextDay = now + 86400 * 8;
     await staking.stake(
-      [1],
+      [11],
       ownerAddress,
       getWei(20),
       getWei(50),
@@ -252,28 +212,28 @@ describe("NFT World Staking & Rental", function () {
       true
     );
     // Initial (deposit + 1 day payment)
-    await rental.connect(user).startRent(1, getWei(70));
+    await rental.connect(user).startRent(11, getWei(70));
 
     // First payment
     let updateDay = now + 86400 * 5;
     await network.provider.send("evm_setNextBlockTimestamp", [updateDay]);
     await network.provider.send("evm_mine");
-    await rental.connect(user).payRent(1, getWei(50));
+    await rental.connect(user).payRent(11, getWei(50));
 
     // Second payment
     updateDay = now + 86400 * 6;
     await network.provider.send("evm_setNextBlockTimestamp", [updateDay]);
     await network.provider.send("evm_mine");
-    await rental.connect(user).payRent(1, getWei(50));
+    await rental.connect(user).payRent(11, getWei(50));
 
     // No payment, can terminate rent
     updateDay = now + 86400 * 7;
     await network.provider.send("evm_setNextBlockTimestamp", [updateDay]);
     await network.provider.send("evm_mine");
-    await rental.terminateRent(1);
+    await rental.terminateRent(11);
 
     // Cannot pay after termination
-    await expect(rental.connect(user).payRent(1, getWei(50))).to.be.reverted;
+    await expect(rental.connect(user).payRent(11, getWei(50))).to.be.reverted;
   });
 
   it("Get original owner of token", async function () {
@@ -286,5 +246,29 @@ describe("NFT World Staking & Rental", function () {
 
     expect(nftOwner1).to.be.equal(staking.address);
     expect(nftOwner1).to.be.not.equal(tokenOwner1);
+  });
+
+  it("Owner stakes and unstakes [10] NFTs to user after 1 month", async function () {
+    const nextDay = now + 86400 * 12;
+    expect(await nft.ownerOf(10), ownerAddress);
+    await staking.stake(
+      [10],
+      ownerAddress,
+      getWei(20),
+      getWei(50),
+      1,
+      nextDay,
+      true
+    );
+    expect(await staking.isStakeActive(10), "true");
+
+    const updateDay = nextDay + 86400 * 30;
+    await network.provider.send("evm_setNextBlockTimestamp", [updateDay]);
+    await network.provider.send("evm_mine");
+
+    await staking.unstake([10], userAddress);
+
+    expect(await staking.isStakeActive(10), "false");
+    expect(await nft.ownerOf(10), userAddress);
   });
 });

@@ -19,7 +19,7 @@ contract NFTStaking is
 {
     using SafeCast for uint256;
 
-    IERC721 immutable NFT_ERC721;
+    IERC721 private immutable NFT_ERC721;
     INFTRental private NFT_RENTAL;
     mapping(uint256 => StakeInformation) private stakeInformation;
 
@@ -82,6 +82,7 @@ contract NFTStaking is
                 _minRentDays,
                 _rentableUntil,
                 uint32(block.timestamp),
+                uint32(block.timestamp + 30 days),
                 _enableRenting
             );
 
@@ -166,10 +167,17 @@ contract NFTStaking is
                 stakeInformation[tokenId].owner == _msgSender(),
                 "NFT_NOT_OWNED"
             );
+
+            require(
+                block.timestamp >= stakeInformation[tokenId].lockUntil,
+                "STAKE_LOCKED_30_DAYS"
+            );
+
             require(!NFT_RENTAL.isRentActive(tokenId), "ACTIVE_RENT"); // EB: Ongoing rent
             NFT_ERC721.safeTransferFrom(address(this), _unstakeTo, tokenId);
             stakeInformation[tokenId] = StakeInformation(
                 address(0),
+                0,
                 0,
                 0,
                 0,
