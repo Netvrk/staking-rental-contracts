@@ -29,3 +29,13 @@ npx hardhat run scripts/deploy.ts
 - Token (NRGY): 0x316c062E0F0ee5A3A0B6182BE6Ca4c54A464698f
 - Staking: 0x65D69e39A5f01287b16e62742545CdEdBD709fD1
 - Rental: 0x925cf9678Bf1deF50f5a6420e5D1CDD22348Ab96
+
+## Smart Contracts - UpgradeableNFT (Ropsten)
+
+- UpgradeableNFT (AXE): 0xae059191db619e9fE4bEb74e42f00C08107D4248
+- ProxyAdmin: 0x9552A57B4fFAd1f27FA98e97f96D0d0BF7630699
+- TransparentUpgradeableProxy (implementation): 0x831D6c68885730ec766d54dDDB9C37D898DB4d53
+
+## Smart Contracts - RolesNFT (Ropsten)
+
+- RolesNFT (RAXE): 0x77dd554CD519F2cBE183631a4e1C89CD918f6F36

@@ -7,6 +7,8 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 
+require('@openzeppelin/hardhat-upgrades');
+
 dotenv.config();
 
 // You need to export an object to set up your config
@@ -46,6 +48,7 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
+    //apiKey: process.env.POLYGONSCAN_API_KEY,
   },
 };
 
