@@ -15,6 +15,7 @@ contract UpgradeableNFT is ERC721EnumerableUpgradeable, OwnableUpgradeable, Paus
 
     function initialize() public initializer {
         __ERC721_init("PICKAXE", "AXE");
+        __Ownable_init();
         _baseTokenURI = "https://api.netvrk.co/api/items/";
     }
 
