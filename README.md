@@ -32,9 +32,9 @@ npx hardhat run scripts/deploy.ts
 
 ## Smart Contracts - UpgradeableNFT (Ropsten)
 
-- UpgradeableNFT (AXE): 0xae059191db619e9fE4bEb74e42f00C08107D4248
+- UpgradeableNFT (AXE): 0xB1b62F6fe3BF560d44421D77Ce32290b7f2954Ed
 - ProxyAdmin: 0x9552A57B4fFAd1f27FA98e97f96D0d0BF7630699
-- TransparentUpgradeableProxy (implementation): 0x831D6c68885730ec766d54dDDB9C37D898DB4d53
+- TransparentUpgradeableProxy: 0x0B241f232475532Eaed892831C2D24a7f2e262a0
 
 ## Smart Contracts - RolesNFT (Ropsten)
 
