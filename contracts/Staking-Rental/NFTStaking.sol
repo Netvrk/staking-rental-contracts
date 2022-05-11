@@ -1,25 +1,27 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 
-import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeCastUpgradeable.sol";
 import "./INFTStaking.sol";
 import "./INFTRental.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 contract NFTStaking is
-    Context,
+    Initializable,
+    ContextUpgradeable,
     INFTStaking,
-    Ownable,
-    ReentrancyGuard,
-    ERC721Enumerable
+    OwnableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    ERC721EnumerableUpgradeable
 {
-    using SafeCast for uint256;
+    using SafeCastUpgradeable for uint256;
 
-    IERC721 private immutable NFT_ERC721;
+    IERC721 private NFT_ERC721;
     INFTRental private NFT_RENTAL;
     mapping(uint256 => StakeInformation) private stakeInformation;
 
@@ -28,8 +30,14 @@ contract NFTStaking is
     // Admin Functions 
     ///////////////////////////////////////////////////
      */
-    constructor(address _nftAddress) ERC721("Staking", "STK") {
+    function initialize(address _nftAddress) public initializer {
         require(_nftAddress != address(0), "INVALID_NFT_ADDRESS");
+        __ERC721_init("Staking", "STK");
+
+        __Context_init_unchained();
+        __Ownable_init_unchained();
+        __ReentrancyGuard_init_unchained();
+
         NFT_ERC721 = IERC721(_nftAddress);
     }
 
@@ -305,7 +313,7 @@ contract NFTStaking is
         public
         view
         virtual
-        override(ERC721Enumerable, IERC165)
+        override(ERC721EnumerableUpgradeable, IERC165)
         returns (bool)
     {
         return
