@@ -6,7 +6,7 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const nft = "0x9Fa1fbE571b4170ce3219d34d616ecd61Ff75A06";
+  const nft = "0x84d24783E12a41B80D2c52E0c0A075739959F959";
 
   const NFTStaking = await ethers.getContractFactory("NFTStaking");
   const staking = await NFTStaking.deploy(nft);
