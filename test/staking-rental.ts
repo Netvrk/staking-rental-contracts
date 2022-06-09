@@ -47,7 +47,10 @@ describe("NFT World Staking & Rental", function () {
 
   it("Deploy Staking and Rental contracts.", async function () {
     const NFTStaking = await ethers.getContractFactory("NFTStaking");
-    staking = await upgrades.deployProxy(NFTStaking, [nft.address]);
+    staking = await upgrades.deployProxy(NFTStaking, [
+      nft.address,
+      "https://www.example.com/",
+    ]);
     await staking.deployed();
 
     const NFTRental = await ethers.getContractFactory("NFTRental");

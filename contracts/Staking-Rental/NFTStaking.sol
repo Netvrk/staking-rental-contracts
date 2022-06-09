@@ -21,6 +21,9 @@ contract NFTStaking is
 {
     using SafeCastUpgradeable for uint256;
 
+    // NFT base URI
+    string internal _baseTokenURI;
+
     IERC721 private NFT_ERC721;
     INFTRental private NFT_RENTAL;
     mapping(uint256 => StakeInformation) private stakeInformation;
@@ -30,15 +33,19 @@ contract NFTStaking is
     // Admin Functions 
     ///////////////////////////////////////////////////
      */
-    function initialize(address _nftAddress) public initializer {
+    function initialize(address _nftAddress, string memory baseURI)
+        public
+        initializer
+    {
         require(_nftAddress != address(0), "INVALID_NFT_ADDRESS");
         __ERC721_init("Staking", "STK");
-
         __Context_init_unchained();
         __Ownable_init_unchained();
         __ReentrancyGuard_init_unchained();
 
         NFT_ERC721 = IERC721(_nftAddress);
+
+        _baseTokenURI = baseURI;
     }
 
     function setRentalContract(INFTRental _rentalAddress) external onlyOwner {
@@ -201,9 +208,40 @@ contract NFTStaking is
 
     /**
     ////////////////////////////////////////////////////
+    // NFT functions
+    ///////////////////////////////////////////////////
+     */
+
+    // Set base URI
+    function setBaseURI(string memory baseTokenURI) external onlyOwner {
+        _baseTokenURI = baseTokenURI;
+    }
+
+    // Get base URI
+    function _baseURI() internal view virtual override returns (string memory) {
+        return _baseTokenURI;
+    }
+
+    /**
+    ////////////////////////////////////////////////////
     // View only functions
     ///////////////////////////////////////////////////
      */
+
+    // Get NFT Address
+    function getNFTAddress() external view override returns (address) {
+        return address(NFT_ERC721);
+    }
+
+    // Get Rental contract address
+    function getRentalContractAddress()
+        external
+        view
+        override
+        returns (address)
+    {
+        return address(NFT_RENTAL);
+    }
 
     // Get stake information
     function getStakeInformation(uint256 _tokenId)

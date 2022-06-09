@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.2;
+pragma solidity ^0.8.11;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
@@ -22,6 +22,11 @@ interface INFTStaking is IERC165, IERC721Receiver {
     function getOriginalOwner(uint256 _tokenId) external view returns (address);
 
     // view functions
+
+    function getNFTAddress() external view returns (address);
+
+    function getRentalContractAddress() external view returns (address);
+
     function getStakeInformation(uint256 _tokenId)
         external
         view
