@@ -25,6 +25,7 @@ contract NFTStaking is
     string internal _baseTokenURI;
 
     IERC721 private NFT_ERC721;
+
     INFTRental private NFT_RENTAL;
     mapping(uint256 => StakeInformation) private stakeInformation;
 

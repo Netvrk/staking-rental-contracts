@@ -41,14 +41,23 @@ const config: HardhatUserConfig = {
           ? [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2]
           : [],
     },
+    matic: {
+      chainId: 137,
+      url: process.env.MATIC_URL || "",
+      accounts:
+        process.env.PRIVATE_KEY_1 !== undefined &&
+        process.env.PRIVATE_KEY_2 !== undefined
+          ? [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2]
+          : [],
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
     currency: "USD",
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
-    //apiKey: process.env.POLYGONSCAN_API_KEY,
+    // apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: process.env.POLYGONSCAN_API_KEY,
   },
 };
 
