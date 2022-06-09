@@ -216,8 +216,8 @@ contract NFTStaking is
     ///////////////////////////////////////////////////
      */
 
-    // Get Nft Address
-    function getNftAddress() external view override returns (address) {
+    // Get NFT Address
+    function getNFTAddress() external view override returns (address) {
         return address(NFT_ERC721);
     }
 

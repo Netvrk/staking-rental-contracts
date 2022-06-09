@@ -23,7 +23,7 @@ interface INFTStaking is IERC165, IERC721Receiver {
 
     // view functions
 
-    function getNftAddress() external view returns (address);
+    function getNFTAddress() external view returns (address);
 
     function getRentalContractAddress() external view returns (address);
 

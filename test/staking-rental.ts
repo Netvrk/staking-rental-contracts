@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Signer } from "ethers";
 import { ethers, network } from "hardhat";
-import { NFT, NFTStaking, NFTRental, VRK } from "../typechain-types";
+import { NFT, NFTRental, NFTStaking, VRK } from "../typechain-types";
 
 describe("NFT World Staking & Rental", function () {
   let nft: NFT;
