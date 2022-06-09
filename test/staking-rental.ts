@@ -1,13 +1,15 @@
 import { expect } from "chai";
-import { Signer } from "ethers";
-import { ethers, network } from "hardhat";
-import { NFT, NFTRental, NFTStaking, VRK } from "../typechain-types";
+
+import { Contract, Signer } from "ethers";
+import { ethers, network, upgrades } from "hardhat";
+import { NFT, VRK } from "../typechain-types";
+
 
 describe("NFT World Staking & Rental", function () {
   let nft: NFT;
   let token: VRK;
-  let staking: NFTStaking;
-  let rental: NFTRental;
+  let staking: Contract;
+  let rental: Contract;
   let owner: Signer;
   let user: Signer;
   let ownerAddress: string;
@@ -47,16 +49,21 @@ describe("NFT World Staking & Rental", function () {
 
   it("Deploy Staking and Rental contracts.", async function () {
     const NFTStaking = await ethers.getContractFactory("NFTStaking");
-    staking = await NFTStaking.deploy(nft.address);
+    staking = await upgrades.deployProxy(NFTStaking, [
+      nft.address,
+      "https://www.example.com/",
+    ]);
     await staking.deployed();
 
     const NFTRental = await ethers.getContractFactory("NFTRental");
-    rental = await NFTRental.deploy(token.address, staking.address);
+    rental = await upgrades.deployProxy(NFTRental, [
+      token.address,
+      staking.address,
+    ]);
     await rental.deployed();
 
     // Set Rental contract
     await staking.setRentalContract(rental.address);
-
     expect(await staking.owner()).to.equal(ownerAddress);
     expect(await rental.owner()).to.equal(ownerAddress);
   });

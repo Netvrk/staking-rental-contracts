@@ -3,13 +3,15 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 
 async function main() {
-  const nft = "0x84d24783E12a41B80D2c52E0c0A075739959F959";
+
+  const nft = "0x36870C401d2410dae177942E42c84Dc25e8e38C0";
+  const baseURI = "https://www.example.com/";
 
   const NFTStaking = await ethers.getContractFactory("NFTStaking");
-  const staking = await NFTStaking.deploy(nft);
+  const staking = await upgrades.deployProxy(NFTStaking, [nft, baseURI]);
 
   await staking.deployed();
 

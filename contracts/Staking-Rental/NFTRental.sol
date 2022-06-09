@@ -1,27 +1,30 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 
-import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "@openzeppelin/contracts/utils/math/Math.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeCastUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
 import "./TransferHelper.sol";
 import "./INFTStaking.sol";
 import "./INFTRental.sol";
 
 contract NFTRental is
-    Context,
+    Initializable,
+    ContextUpgradeable,
     INFTRental,
-    Ownable,
-    ReentrancyGuard,
-    ERC721Enumerable
+    OwnableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    ERC721EnumerableUpgradeable
 {
-    using SafeCast for uint256;
+    using SafeCastUpgradeable for uint256;
 
-    address private immutable ERC20_TOKEN_ADDRESS;
-    INFTStaking private immutable NFTStaking;
+    address private ERC20_TOKEN_ADDRESS;
+    INFTStaking private NFTStaking;
     mapping(uint256 => RentInformation) private rentInformation;
 
     /**
@@ -29,14 +32,21 @@ contract NFTRental is
     // Admin Functions 
     ///////////////////////////////////////////////////
      */
-    constructor(address _tokenAddress, INFTStaking _stakingAddress)
-        ERC721("Rental", "RNTL")
+    function initialize(address _tokenAddress, INFTStaking _stakingAddress)
+        public
+        initializer
     {
         require(_tokenAddress != address(0), "INVALID_TOKEN_ADDRESS");
         require(
             _stakingAddress.supportsInterface(type(INFTStaking).interfaceId),
             "INVALID_STAKING_ADDRESS"
         );
+        __ERC721_init("Rental", "RNTL");
+
+        __Context_init_unchained();
+        __Ownable_init_unchained();
+        __ReentrancyGuard_init_unchained();
+
         ERC20_TOKEN_ADDRESS = _tokenAddress;
         NFTStaking = _stakingAddress;
     }
@@ -82,7 +92,7 @@ contract NFTRental is
         // prevent the user from paying too much
         // block.timestamp casts it into uint256 which is desired
         // if the rentable time left is less than minRentDays then the tenant just has to pay up until the time limit
-        uint256 paymentAmount = Math.min(
+        uint256 paymentAmount = MathUpgradeable.min(
             ((stakeInfo_.rentableUntil - block.timestamp) *
                 stakeInfo_.rentalPerDay) / (1 days),
             _initialPayment
@@ -116,7 +126,7 @@ contract NFTRental is
         RentInformation memory rentInformation_ = rentInformation[_tokenId];
         require(rentInformation_.tenant == _msgSender(), "NOT_RENTED");
         // prevent the user from paying too much
-        uint256 paymentAmount = Math.min(
+        uint256 paymentAmount = MathUpgradeable.min(
             (uint256(
                 stakeInfo_.rentableUntil - rentInformation_.rentStartTime
             ) * stakeInfo_.rentalPerDay) /
@@ -206,7 +216,7 @@ contract NFTRental is
             uint256 rentalPaidSeconds = (uint256(rentInformation_.rentalPaid) *
                 (1 days)) / stakeInfo_.rentalPerDay;
             bool fundExceedsMin = rentalPaidSeconds >=
-                Math.max(
+                MathUpgradeable.max(
                     stakeInfo_.minRentDays * (1 days),
                     block.timestamp - rentInformation_.rentStartTime
                 );
@@ -251,7 +261,7 @@ contract NFTRental is
         public
         view
         virtual
-        override(ERC721Enumerable, IERC165)
+        override(ERC721EnumerableUpgradeable, IERC165)
         returns (bool)
     {
         return
