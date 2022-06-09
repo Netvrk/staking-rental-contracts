@@ -22,6 +22,11 @@ interface INFTStaking is IERC165, IERC721Receiver {
     function getOriginalOwner(uint256 _tokenId) external view returns (address);
 
     // view functions
+
+    function getNftAddress() external view returns (address);
+
+    function getRentalContractAddress() external view returns (address);
+
     function getStakeInformation(uint256 _tokenId)
         external
         view

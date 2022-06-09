@@ -19,6 +19,9 @@ contract NFTStaking is
 {
     using SafeCast for uint256;
 
+    // NFT base URI
+    string internal _baseTokenURI;
+
     IERC721 private immutable NFT_ERC721;
     INFTRental private NFT_RENTAL;
     mapping(uint256 => StakeInformation) private stakeInformation;
@@ -193,9 +196,40 @@ contract NFTStaking is
 
     /**
     ////////////////////////////////////////////////////
+    // NFT functions
+    ///////////////////////////////////////////////////
+     */
+
+    // Set base URI
+    function setBaseURI(string memory baseTokenURI) external onlyOwner {
+        _baseTokenURI = baseTokenURI;
+    }
+
+    // Get base URI
+    function _baseURI() internal view virtual override returns (string memory) {
+        return _baseTokenURI;
+    }
+
+    /**
+    ////////////////////////////////////////////////////
     // View only functions
     ///////////////////////////////////////////////////
      */
+
+    // Get Nft Address
+    function getNftAddress() external view override returns (address) {
+        return address(NFT_ERC721);
+    }
+
+    // Get Rental contract address
+    function getRentalContractAddress()
+        external
+        view
+        override
+        returns (address)
+    {
+        return address(NFT_RENTAL);
+    }
 
     // Get stake information
     function getStakeInformation(uint256 _tokenId)
