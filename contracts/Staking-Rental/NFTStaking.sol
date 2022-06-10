@@ -10,11 +10,13 @@ import "./INFTRental.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 contract NFTStaking is
     Initializable,
     ContextUpgradeable,
     INFTStaking,
+    UUPSUpgradeable,
     OwnableUpgradeable,
     ReentrancyGuardUpgradeable,
     ERC721EnumerableUpgradeable
@@ -39,13 +41,14 @@ contract NFTStaking is
         initializer
     {
         require(_nftAddress != address(0), "INVALID_NFT_ADDRESS");
+
+        __UUPSUpgradeable_init();
         __ERC721_init("Staking", "STK");
         __Context_init_unchained();
         __Ownable_init_unchained();
         __ReentrancyGuard_init_unchained();
 
         NFT_ERC721 = IERC721(_nftAddress);
-
         _baseTokenURI = baseURI;
     }
 
@@ -86,6 +89,7 @@ contract NFTStaking is
         );
         for (uint256 i = 0; i < _tokenIds.length; i++) {
             uint256 tokenId = _tokenIds[i];
+
             require(
                 NFT_ERC721.ownerOf(tokenId) == _msgSender(),
                 "NFT_NOT_OWNED"
@@ -137,7 +141,10 @@ contract NFTStaking is
                     stakeInfo_.owner == _msgSender(),
                 "NFT_NOT_OWNED"
             );
-            require(!NFT_RENTAL.isRentActive(tokenId), "ACTIVE_RENT"); // EB: Ongoing rent
+
+            if (address(NFT_RENTAL) != address(0)) {
+                require(!NFT_RENTAL.isRentActive(tokenId), "ACTIVE_RENT"); // EB: Ongoing rent
+            }
 
             stakeInfo_.deposit = _deposit;
             stakeInfo_.rentalPerDay = _rentalPerDay;
@@ -189,7 +196,10 @@ contract NFTStaking is
                 "STAKE_LOCKED_30_DAYS"
             );
 
-            require(!NFT_RENTAL.isRentActive(tokenId), "ACTIVE_RENT"); // EB: Ongoing rent
+            if (address(NFT_RENTAL) != address(0)) {
+                require(!NFT_RENTAL.isRentActive(tokenId), "ACTIVE_RENT"); // EB: Ongoing rent
+            }
+
             NFT_ERC721.safeTransferFrom(address(this), _unstakeTo, tokenId);
             stakeInformation[tokenId] = StakeInformation(
                 address(0),
@@ -298,6 +308,9 @@ contract NFTStaking is
     // Internal Functions 
     ///////////////////////////////////////////////////
      */
+
+    // UUPS proxy function
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function onERC721Received(
         address operator,

@@ -4,7 +4,6 @@ import { Contract, Signer } from "ethers";
 import { ethers, network, upgrades } from "hardhat";
 import { NFT, VRK } from "../typechain-types";
 
-
 describe("NFT World Staking & Rental", function () {
   let nft: NFT;
   let token: VRK;
@@ -49,10 +48,11 @@ describe("NFT World Staking & Rental", function () {
 
   it("Deploy Staking and Rental contracts.", async function () {
     const NFTStaking = await ethers.getContractFactory("NFTStaking");
-    staking = await upgrades.deployProxy(NFTStaking, [
-      nft.address,
-      "https://www.example.com/",
-    ]);
+    staking = await upgrades.deployProxy(
+      NFTStaking,
+      [nft.address, "https://www.example.com/"],
+      { kind: "uups" }
+    );
     await staking.deployed();
 
     const NFTRental = await ethers.getContractFactory("NFTRental");

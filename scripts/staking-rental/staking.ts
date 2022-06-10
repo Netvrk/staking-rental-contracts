@@ -6,16 +6,26 @@
 import { ethers, upgrades } from "hardhat";
 
 async function main() {
+  const [, user] = await ethers.getSigners();
 
+  const proxyAddress = "0x19002294F4dDCf25B27EF0072552E118a7f0b782";
   const nft = "0x36870C401d2410dae177942E42c84Dc25e8e38C0";
   const baseURI = "https://www.example.com/";
+  let staking = null;
+  if (proxyAddress) {
+    const NFTStaking = await ethers.getContractFactory("NFTStaking");
+    staking = await upgrades.upgradeProxy(proxyAddress, NFTStaking);
+    await staking.deployed();
+  } else {
+    const NFTStaking = await ethers.getContractFactory("NFTStaking");
+    staking = await upgrades.deployProxy(NFTStaking, [nft, baseURI], {
+      kind: "uups",
+    });
 
-  const NFTStaking = await ethers.getContractFactory("NFTStaking");
-  const staking = await upgrades.deployProxy(NFTStaking, [nft, baseURI]);
+    await staking.deployed();
+  }
 
-  await staking.deployed();
-
-  console.log("NFTStaking deployed to:", staking.address);
+  console.log("NFTStaking deployed to:", staking?.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

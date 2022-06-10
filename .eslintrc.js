@@ -20,5 +20,6 @@ module.exports = {
       "error",
       { ignores: ["modules"] },
     ],
+    "no-empty-blocks": "off",
   },
 };

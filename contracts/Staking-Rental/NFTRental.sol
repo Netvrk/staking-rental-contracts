@@ -8,6 +8,7 @@ import "@openzeppelin/contracts-upgradeable/utils/math/SafeCastUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 import "./TransferHelper.sol";
 import "./INFTStaking.sol";
@@ -17,6 +18,7 @@ contract NFTRental is
     Initializable,
     ContextUpgradeable,
     INFTRental,
+    UUPSUpgradeable,
     OwnableUpgradeable,
     ReentrancyGuardUpgradeable,
     ERC721EnumerableUpgradeable
@@ -41,8 +43,9 @@ contract NFTRental is
             _stakingAddress.supportsInterface(type(INFTStaking).interfaceId),
             "INVALID_STAKING_ADDRESS"
         );
-        __ERC721_init("Rental", "RNTL");
 
+        __UUPSUpgradeable_init();
+        __ERC721_init("Rental", "RNTL");
         __Context_init_unchained();
         __Ownable_init_unchained();
         __ReentrancyGuard_init_unchained();
@@ -247,6 +250,9 @@ contract NFTRental is
     // Internal Functions 
     ///////////////////////////////////////////////////
      */
+
+    // UUPS proxy function
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function _beforeTokenTransfer(
         address from,
