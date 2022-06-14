@@ -2,6 +2,7 @@ import * as dotenv from "dotenv";
 
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
+import "@openzeppelin/hardhat-defender";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import { HardhatUserConfig } from "hardhat/config";
@@ -33,6 +34,14 @@ const config: HardhatUserConfig = {
           ? [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2]
           : [],
     },
+    rinkeby: {
+      url: process.env.RINKEBY_URL || "",
+      accounts:
+        process.env.PRIVATE_KEY_1 !== undefined &&
+        process.env.PRIVATE_KEY_2 !== undefined
+          ? [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2]
+          : [],
+    },
     mumbai: {
       url: process.env.MUMBAI_URL || "",
       accounts:
@@ -58,6 +67,10 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
     // apiKey: process.env.POLYGONSCAN_API_KEY,
+  },
+  defender: {
+    apiKey: process.env.DEFENDER_API_KEY || "",
+    apiSecret: process.env.DEFENDER_API_SECRET || "",
   },
 };
 

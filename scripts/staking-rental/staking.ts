@@ -3,19 +3,35 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-import { ethers, upgrades } from "hardhat";
+import * as dotenv from "dotenv";
+import { defender, ethers, upgrades } from "hardhat";
+dotenv.config();
 
 async function main() {
-  const [, user] = await ethers.getSigners();
+  const proxyAddress = "0xC963CBEDb900e4E535FDfBd49085E7Bd62BD1391";
 
-  const proxyAddress = "0x19002294F4dDCf25B27EF0072552E118a7f0b782";
-  const nft = "0x36870C401d2410dae177942E42c84Dc25e8e38C0";
-  const baseURI = "https://www.example.com/";
+  const PURPOSE_REQ = 1;
+
+  const nft = "0xada509752b0D30FDf51e20EC4A656Edddb76cd36";
+
+  const baseURI = "https://api.netvrk.co/api/items/";
+
   let staking = null;
+
   if (proxyAddress) {
-    const NFTStaking = await ethers.getContractFactory("NFTStaking");
-    staking = await upgrades.upgradeProxy(proxyAddress, NFTStaking);
-    await staking.deployed();
+    if (PURPOSE_REQ) {
+      const NFTStaking = await ethers.getContractFactory("NFTStaking");
+      const proposal = await defender.proposeUpgrade(proxyAddress, NFTStaking, {
+        multisig: process.env.MULTI_SIG,
+        title: "Upgrade staking contract",
+        description: "Upgrade with some changes",
+      });
+      console.log("Upgrade proposal created at:", proposal.url);
+    } else {
+      const NFTStaking = await ethers.getContractFactory("NFTStaking");
+      staking = await upgrades.upgradeProxy(proxyAddress, NFTStaking);
+      await staking.deployed();
+    }
   } else {
     const NFTStaking = await ethers.getContractFactory("NFTStaking");
     staking = await upgrades.deployProxy(NFTStaking, [nft, baseURI], {
