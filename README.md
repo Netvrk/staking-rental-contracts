@@ -2,19 +2,11 @@
 
 This project includes the rental and staking contracts used in NetVrk ecosystem.
 
-### Deployment Steps
+## Smart contracts [mainnet]
 
-```bash
-npx hardhat compile
-npx hardhat run scripts/deploy.ts
-```
-
-## Smart Contracts (Ropsten)
-
-- NFT: 0xF5B84B4F60F47616e79d7a46d43706B90AdD1e56
-- Token (NRGY): 0x75195E6e635e2ca8DB104FE9D184f334ee89c7b3
-- Staking: 0x24371B215Cc99D15dc8DdDe4D428e87965E005af
-- Rental: 0xa267C8f411B4482Fa87eE29DFc8b032AbfB29e9F
+- Staked Netvrk Land: https://etherscan.io/address/0x1536591a2ae88bbfbb2511b0808696bc0266dca0
+- Staked Netvrk Bonus: https://etherscan.io/address/0x543b2579513fec396fb03acc334c2d47e346a42a
+- Staked Netvrk Transport: https://etherscan.io/address/0x1efb6a3125b509983c1ad95e8015d1e93398997d
 
 ## Smart Contracts - NFT Style (Ropsten)
 

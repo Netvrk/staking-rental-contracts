@@ -44,7 +44,7 @@ contract StakedNetvrkTransport is
         require(_nftAddress != address(0), "INVALID_NFT_ADDRESS");
 
         __UUPSUpgradeable_init();
-        __ERC721_init("Staked Netvrk Transport", "SNVKTRANSPORT");
+        __ERC721_init("StakedNetvrkTransport", "SNVKTP");
         __Context_init_unchained();
         __Ownable_init_unchained();
         __ReentrancyGuard_init_unchained();

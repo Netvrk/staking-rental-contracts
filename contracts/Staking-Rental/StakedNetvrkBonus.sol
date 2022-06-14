@@ -45,7 +45,7 @@ contract StakedNetvrkBonus is
         require(_nftAddress != address(0), "INVALID_NFT_ADDRESS");
 
         __UUPSUpgradeable_init();
-        __ERC721_init("Staked Netvrk Bonus", "SNVKBONUS");
+        __ERC721_init("StakedNetvrkBonus", "SNVKBP");
         __Context_init_unchained();
         __Ownable_init_unchained();
         __ReentrancyGuard_init_unchained();

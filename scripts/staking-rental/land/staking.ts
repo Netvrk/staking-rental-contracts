@@ -8,7 +8,7 @@ import { defender, ethers, upgrades } from "hardhat";
 dotenv.config();
 
 async function main() {
-  const proxyAddress = null;
+  const proxyAddress = "0x1536591A2AE88bbFbb2511B0808696bC0266DCa0";
   const PURPOSE_REQ = 0;
   const nft = "0x244FC4178fa685Af909c88b4D4CD7eB9127eDb0B";
   const baseURI = "https://api.netvrk.co/api/items/";
