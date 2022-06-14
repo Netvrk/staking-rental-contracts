@@ -84,7 +84,7 @@ contract StakedNetvrkLand is
         _ensureEOAorERC721Receiver(_stakeTo);
         require(_stakeTo != address(this), "INVALID_STAKE_TO");
         require(
-            _rentableUntil >=
+            uint256(_rentableUntil) >=
                 block.timestamp + (uint256(_minRentDays) * 1 days),
             "INVALID_RENTABLE_UNTIL"
         );
@@ -129,7 +129,7 @@ contract StakedNetvrkLand is
         );
 
         require(
-            _rentableUntil >=
+            uint256(_rentableUntil) >=
                 block.timestamp + (uint256(_minRentDays) * 1 days),
             "INVALID_RENTABLE_UNTIL"
         );

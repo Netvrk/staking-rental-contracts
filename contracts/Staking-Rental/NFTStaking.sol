@@ -84,7 +84,7 @@ contract NFTStaking is
         _ensureEOAorERC721Receiver(_stakeTo);
         require(_stakeTo != address(this), "INVALID_STAKE_TO");
         require(
-            _rentableUntil >=
+            uint256(_rentableUntil) >=
                 block.timestamp + (uint256(_minRentDays) * 1 days),
             "INVALID_RENTABLE_UNTIL"
         );
@@ -129,7 +129,7 @@ contract NFTStaking is
         );
 
         require(
-            _rentableUntil >=
+            uint256(_rentableUntil) >=
                 block.timestamp + (uint256(_minRentDays) * 1 days),
             "INVALID_RENTABLE_UNTIL"
         );
@@ -192,10 +192,10 @@ contract NFTStaking is
                 "NFT_NOT_OWNED"
             );
 
-            // require(
-            //     block.timestamp >= stakeInformation[tokenId].lockUntil,
-            //     "STAKE_LOCKED_30_DAYS"
-            // );
+            require(
+                block.timestamp >= stakeInformation[tokenId].lockUntil,
+                "STAKE_LOCKED_30_DAYS"
+            );
 
             if (address(NFT_RENTAL) != address(0)) {
                 require(!NFT_RENTAL.isRentActive(tokenId), "ACTIVE_RENT"); // EB: Ongoing rent

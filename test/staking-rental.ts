@@ -278,4 +278,30 @@ describe("NFT World Staking & Rental", function () {
     expect(await staking.isStakeActive(10), "false");
     expect(await nft.ownerOf(10), userAddress);
   });
+
+  it("Owner stakes and unstakes [12] NFTs to user after 1 month, but cant unstake because of rent", async function () {
+    const nextDay = now + 86400 * 60;
+    expect(await nft.ownerOf(12), ownerAddress);
+    await staking.stake(
+      [12],
+      ownerAddress,
+      getWei(20),
+      getWei(50),
+      2,
+      nextDay,
+      true
+    );
+    expect(await staking.isStakeActive(12), "true");
+
+    const updateDay = now + 86400 * 50;
+
+    await network.provider.send("evm_setNextBlockTimestamp", [updateDay]);
+    await network.provider.send("evm_mine");
+
+    await rental.connect(user).startRent(12, getWei(90000000));
+
+    await expect(staking.unstake([12], userAddress)).to.be.reverted;
+
+    expect(await nft.ownerOf(12), userAddress);
+  });
 });

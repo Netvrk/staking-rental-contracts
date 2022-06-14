@@ -79,7 +79,7 @@ contract NFTRental is
         require(stakeInfo_.enableRenting == true, "RENT_DISABLED");
         require(
             uint256(stakeInfo_.rentableUntil) >=
-                block.timestamp + stakeInfo_.minRentDays * (1 days),
+                block.timestamp + (uint256(stakeInfo_.minRentDays) * 1 days),
             "NOT_AVAILABLE"
         );
         if (rentInformation_.tenant != address(0)) {

@@ -130,7 +130,7 @@ contract StakedNetvrkBonus is
         );
 
         require(
-            _rentableUntil >=
+            uint256(_rentableUntil) >=
                 block.timestamp + (uint256(_minRentDays) * 1 days),
             "INVALID_RENTABLE_UNTIL"
         );
