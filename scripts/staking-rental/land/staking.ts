@@ -8,40 +8,46 @@ import { defender, ethers, upgrades } from "hardhat";
 dotenv.config();
 
 async function main() {
-  const proxyAddress = "0xC963CBEDb900e4E535FDfBd49085E7Bd62BD1391";
-
-  const PURPOSE_REQ = 1;
-
-  const nft = "0xada509752b0D30FDf51e20EC4A656Edddb76cd36";
-
+  const proxyAddress = null;
+  const PURPOSE_REQ = 0;
+  const nft = "0x244FC4178fa685Af909c88b4D4CD7eB9127eDb0B";
   const baseURI = "https://api.netvrk.co/api/items/";
-
   let staking = null;
 
   if (proxyAddress) {
     if (PURPOSE_REQ) {
-      const NFTStaking = await ethers.getContractFactory("NFTStaking");
-      const proposal = await defender.proposeUpgrade(proxyAddress, NFTStaking, {
-        multisig: process.env.MULTI_SIG,
-        title: "Upgrade staking contract #1",
-        description: "Upgrade with some new changes",
-      });
+      const StakedNetvrkLand = await ethers.getContractFactory(
+        "StakedNetvrkLand"
+      );
+      const proposal = await defender.proposeUpgrade(
+        proxyAddress,
+        StakedNetvrkLand,
+        {
+          multisig: process.env.MULTI_SIG,
+          title: "Upgrade staking contract",
+          description: "Upgrade with some changes",
+        }
+      );
       console.log("Upgrade proposal created at:", proposal.url);
     } else {
-      const NFTStaking = await ethers.getContractFactory("NFTStaking");
-      staking = await upgrades.upgradeProxy(proxyAddress, NFTStaking);
+      const StakedNetvrkLand = await ethers.getContractFactory(
+        "StakedNetvrkLand"
+      );
+      staking = await upgrades.upgradeProxy(proxyAddress, StakedNetvrkLand);
       await staking.deployed();
     }
   } else {
-    const NFTStaking = await ethers.getContractFactory("NFTStaking");
-    staking = await upgrades.deployProxy(NFTStaking, [nft, baseURI], {
+    const StakedNetvrkLand = await ethers.getContractFactory(
+      "StakedNetvrkLand"
+    );
+    staking = await upgrades.deployProxy(StakedNetvrkLand, [nft, baseURI], {
       kind: "uups",
     });
 
     await staking.deployed();
   }
 
-  console.log("NFTStaking deployed to:", staking?.address);
+  console.log("StakedNetvrkLand deployed to:", staking?.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

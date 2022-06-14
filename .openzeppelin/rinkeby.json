@@ -206,7 +206,7 @@
             "slot": "401",
             "type": "t_string_storage",
             "contract": "NFTStaking",
-            "src": "contracts\\Staking-Rental\\NFTStaking.sol:27"
+            "src": "contracts\\Staking-Rental\\NFTStaking.sol:28"
           },
           {
             "label": "NFT_ERC721",
@@ -214,7 +214,7 @@
             "slot": "402",
             "type": "t_contract(IERC721)5902",
             "contract": "NFTStaking",
-            "src": "contracts\\Staking-Rental\\NFTStaking.sol:29"
+            "src": "contracts\\Staking-Rental\\NFTStaking.sol:30"
           },
           {
             "label": "NFT_RENTAL",
@@ -222,7 +222,7 @@
             "slot": "403",
             "type": "t_contract(INFTRental)10195",
             "contract": "NFTStaking",
-            "src": "contracts\\Staking-Rental\\NFTStaking.sol:31"
+            "src": "contracts\\Staking-Rental\\NFTStaking.sol:32"
           },
           {
             "label": "stakeInformation",
@@ -230,7 +230,7 @@
             "slot": "404",
             "type": "t_mapping(t_uint256,t_struct(StakeInformation)10232_storage)",
             "contract": "NFTStaking",
-            "src": "contracts\\Staking-Rental\\NFTStaking.sol:32"
+            "src": "contracts\\Staking-Rental\\NFTStaking.sol:33"
           }
         ],
         "types": {

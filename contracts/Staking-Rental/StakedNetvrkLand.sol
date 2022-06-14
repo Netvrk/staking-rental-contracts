@@ -13,7 +13,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "./Interfaces/INFTStaking.sol";
 import "./Interfaces/INFTRental.sol";
 
-contract NFTStaking is
+contract StakedNetvrkLand is
     Initializable,
     ContextUpgradeable,
     INFTStaking,
@@ -44,7 +44,7 @@ contract NFTStaking is
         require(_nftAddress != address(0), "INVALID_NFT_ADDRESS");
 
         __UUPSUpgradeable_init();
-        __ERC721_init("Staking", "STK");
+        __ERC721_init("Staked Netvrk Land", "SNVKLAND");
         __Context_init_unchained();
         __Ownable_init_unchained();
         __ReentrancyGuard_init_unchained();
@@ -192,10 +192,10 @@ contract NFTStaking is
                 "NFT_NOT_OWNED"
             );
 
-            // require(
-            //     block.timestamp >= stakeInformation[tokenId].lockUntil,
-            //     "STAKE_LOCKED_30_DAYS"
-            // );
+            require(
+                block.timestamp >= stakeInformation[tokenId].lockUntil,
+                "STAKE_LOCKED_30_DAYS"
+            );
 
             if (address(NFT_RENTAL) != address(0)) {
                 require(!NFT_RENTAL.isRentActive(tokenId), "ACTIVE_RENT"); // EB: Ongoing rent

@@ -5,6 +5,7 @@ import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeCastUpgradeable.sol";
+
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -13,7 +14,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "./Interfaces/INFTStaking.sol";
 import "./Interfaces/INFTRental.sol";
 
-contract NFTStaking is
+contract StakedNetvrkBonus is
     Initializable,
     ContextUpgradeable,
     INFTStaking,
@@ -44,7 +45,7 @@ contract NFTStaking is
         require(_nftAddress != address(0), "INVALID_NFT_ADDRESS");
 
         __UUPSUpgradeable_init();
-        __ERC721_init("Staking", "STK");
+        __ERC721_init("Staked Netvrk Bonus", "SNVKBONUS");
         __Context_init_unchained();
         __Ownable_init_unchained();
         __ReentrancyGuard_init_unchained();
@@ -192,10 +193,10 @@ contract NFTStaking is
                 "NFT_NOT_OWNED"
             );
 
-            // require(
-            //     block.timestamp >= stakeInformation[tokenId].lockUntil,
-            //     "STAKE_LOCKED_30_DAYS"
-            // );
+            require(
+                block.timestamp >= stakeInformation[tokenId].lockUntil,
+                "STAKE_LOCKED_30_DAYS"
+            );
 
             if (address(NFT_RENTAL) != address(0)) {
                 require(!NFT_RENTAL.isRentActive(tokenId), "ACTIVE_RENT"); // EB: Ongoing rent
