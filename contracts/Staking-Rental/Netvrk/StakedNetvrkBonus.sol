@@ -11,8 +11,8 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721Enumer
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-import "./Interfaces/INFTStaking.sol";
-import "./Interfaces/INFTRental.sol";
+import "../Interfaces/INFTStaking.sol";
+import "../Interfaces/INFTRental.sol";
 
 contract StakedNetvrkBonus is
     Initializable,
