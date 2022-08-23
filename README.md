@@ -8,12 +8,14 @@ This project includes the rental and staking contracts used in NetVrk ecosystem.
 - Staked Netvrk Bonus: https://etherscan.io/address/0x543b2579513fec396fb03acc334c2d47e346a42a
 - Staked Netvrk Transport: https://etherscan.io/address/0x1efb6a3125b509983c1ad95e8015d1e93398997d
 
-## Smart Contracts - NFT Style (Ropsten)
+## Smart Contracts - NFT Style (Goerli)
 
-- NFT: 0x9Fa1fbE571b4170ce3219d34d616ecd61Ff75A06
-- Token (VRK): 0x411caE8A9e0FBecdd7cEE35188c4706fF3DA2598
-- Staking: 0x375D32959D3a55Abd7d50Ed297D07EA2a25e3dab
-- Rental: 0xC6340bf1c3DeA84c9F6A7372F8bFD41Bd62992C6
+- Netvrk Land: [0xfE8b6048e90E70dcd052614DBA59DB5CA5f17aDA](https://goerli.etherscan.io/address/0xfE8b6048e90E70dcd052614DBA59DB5CA5f17aDA)
+- Netvrk Bonus: [0xa22a01abe48738ebace493e4a2cc2111b72f96c1](https://goerli.etherscan.io/address/0xa22a01abe48738ebace493e4a2cc2111b72f96c1)
+- Netvrk Transport: [0xC963CBEDb900e4E535FDfBd49085E7Bd62BD1391](https://goerli.etherscan.io/address/0xC963CBEDb900e4E535FDfBd49085E7Bd62BD1391)
+- Staked Netvrk Land: [0x75195E6e635e2ca8DB104FE9D184f334ee89c7b3](https://goerli.etherscan.io/address/0x75195E6e635e2ca8DB104FE9D184f334ee89c7b3)
+- Staked Netvrk Bonus: [0xa267C8f411B4482Fa87eE29DFc8b032AbfB29e9F](https://goerli.etherscan.io/address/0xa267C8f411B4482Fa87eE29DFc8b032AbfB29e9F)
+- Staked Netvrk Transport: [0xF7d159CB790B4Df461c955aFb0f0C26afF14B39a](https://goerli.etherscan.io/address/0xF7d159CB790B4Df461c955aFb0f0C26afF14B39a)
 
 ## Smart Contracts (Mumbai)
 

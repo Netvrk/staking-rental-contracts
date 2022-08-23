@@ -8,15 +8,12 @@ import { defender, ethers, upgrades } from "hardhat";
 dotenv.config();
 
 async function main() {
-  const proxyAddress = "0xC963CBEDb900e4E535FDfBd49085E7Bd62BD1391";
+  let staking: any;
+  const proxyAddress = null;
+  const PURPOSE_REQ = false;
 
-  const PURPOSE_REQ = 1;
-
-  const nft = "0xada509752b0D30FDf51e20EC4A656Edddb76cd36";
-
-  const baseURI = "https://api.netvrk.co/api/items/";
-
-  let staking = null;
+  const nft = "0xa22a01abe48738ebace493e4a2cc2111b72f96c1";
+  const baseURI = "https://api.netvrk.co/api/bonus-pack/";
 
   if (proxyAddress) {
     if (PURPOSE_REQ) {
@@ -33,7 +30,7 @@ async function main() {
       await staking.deployed();
     }
   } else {
-    const NFTStaking = await ethers.getContractFactory("NFTStaking");
+    const NFTStaking = await ethers.getContractFactory("StakedNetvrkBonus");
     staking = await upgrades.deployProxy(NFTStaking, [nft, baseURI], {
       kind: "uups",
     });

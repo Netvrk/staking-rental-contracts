@@ -10,16 +10,17 @@ dotenv.config();
 async function main() {
   const proxyAddress = null;
 
-  const PURPOSE_REQ = 0;
+  const PURPOSE_REQ = false;
 
-  const nft = "0x8Aedef6F376078AD4EC9815820C3C887D99e9DBC";
+  const avatarNFT = "0xe88A781C82d3Eb8b1C1A98C270f2826B8bcc5DBb";
 
-  const baseURI = "https://api.netvrk.co/avatar/items/";
+  const baseURI = "https://api.netvrk.co/api/damon-dash/avatar/";
 
   let staking = null;
 
   if (proxyAddress) {
     if (PURPOSE_REQ) {
+      // Upgrade to a proxy contract with the purpose requested
       const DDStaking = await ethers.getContractFactory("DDStaking");
       const proposal = await defender.proposeUpgrade(proxyAddress, DDStaking, {
         multisig: process.env.MULTI_SIG,
@@ -28,13 +29,15 @@ async function main() {
       });
       console.log("Upgrade proposal created at:", proposal.url);
     } else {
+      // Upgrade the proxy contract to the new version
       const DDStaking = await ethers.getContractFactory("DDStaking");
       staking = await upgrades.upgradeProxy(proxyAddress, DDStaking);
       await staking.deployed();
     }
   } else {
+    // Deploy the new version of the staking contract
     const DDStaking = await ethers.getContractFactory("DDStaking");
-    staking = await upgrades.deployProxy(DDStaking, [nft, baseURI], {
+    staking = await upgrades.deployProxy(DDStaking, [avatarNFT, baseURI], {
       kind: "uups",
     });
 

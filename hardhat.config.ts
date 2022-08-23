@@ -25,6 +25,7 @@ const config: HardhatUserConfig = {
       },
     },
   },
+
   networks: {
     mainnet: {
       url: process.env.MAINNET_URL || "",
@@ -33,37 +34,33 @@ const config: HardhatUserConfig = {
           ? [process.env.PRIVATE_KEY_DEPLOYER]
           : [],
     },
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
+    goerli: {
+      url: process.env.GOERLI_URL || "",
       accounts:
-        process.env.PRIVATE_KEY_1 !== undefined &&
-        process.env.PRIVATE_KEY_2 !== undefined
-          ? [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2]
+        process.env.PRIVATE_KEY_1 !== undefined
+          ? [process.env.PRIVATE_KEY_1]
           : [],
     },
     rinkeby: {
       url: process.env.RINKEBY_URL || "",
       accounts:
-        process.env.PRIVATE_KEY_1 !== undefined &&
-        process.env.PRIVATE_KEY_2 !== undefined
-          ? [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2]
+        process.env.PRIVATE_KEY_1 !== undefined
+          ? [process.env.PRIVATE_KEY_1]
           : [],
     },
     mumbai: {
       url: process.env.MUMBAI_URL || "",
       accounts:
-        process.env.PRIVATE_KEY_1 !== undefined &&
-        process.env.PRIVATE_KEY_2 !== undefined
-          ? [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2]
+        process.env.PRIVATE_KEY_1 !== undefined
+          ? [process.env.PRIVATE_KEY_1]
           : [],
     },
     matic: {
       chainId: 137,
       url: process.env.MATIC_URL || "",
       accounts:
-        process.env.PRIVATE_KEY_1 !== undefined &&
-        process.env.PRIVATE_KEY_2 !== undefined
-          ? [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2]
+        process.env.PRIVATE_KEY_1 !== undefined
+          ? [process.env.PRIVATE_KEY_1]
           : [],
     },
   },
