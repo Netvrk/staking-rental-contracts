@@ -21,5 +21,11 @@ module.exports = {
       { ignores: ["modules"] },
     ],
     "no-empty-blocks": "off",
+    "prettier/prettier": [
+      "error",
+      {
+        endOfLine: "auto",
+      },
+    ],
   },
 };
