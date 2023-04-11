@@ -29,7 +29,7 @@
   "impls": {
     "cfe0fec234b31c64575205c16e16873c40f5c7be17baa4609761bc3ed0a25ee2": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x188044dc84ecbb2a24d5b34ae80e872456499428f8e0ae02456e9aab7c8a978a",
+      "txHash": "0x6fb0f81b679c6d47b51eefa4ac18052db4388b0439ea233b4e8611f56d1ed499",
       "layout": {
         "storage": [
           {
@@ -221,7 +221,7 @@
             "label": "NFTStaking",
             "offset": 0,
             "slot": "402",
-            "type": "t_contract(INFTStaking)10335",
+            "type": "t_contract(INFTStaking)11231",
             "contract": "NFTRental",
             "src": "contracts\\Staking-Rental\\NFTRental.sol:29"
           },
@@ -229,7 +229,7 @@
             "label": "rentInformation",
             "offset": 0,
             "slot": "403",
-            "type": "t_mapping(t_uint256,t_struct(RentInformation)10146_storage)",
+            "type": "t_mapping(t_uint256,t_struct(RentInformation)11042_storage)",
             "contract": "NFTRental",
             "src": "contracts\\Staking-Rental\\NFTRental.sol:30"
           }
@@ -263,7 +263,7 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(INFTStaking)10335": {
+          "t_contract(INFTStaking)11231": {
             "label": "contract INFTStaking",
             "numberOfBytes": "20"
           },
@@ -287,7 +287,7 @@
             "label": "mapping(uint256 => address)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(RentInformation)10146_storage)": {
+          "t_mapping(t_uint256,t_struct(RentInformation)11042_storage)": {
             "label": "mapping(uint256 => struct INFTRental.RentInformation)",
             "numberOfBytes": "32"
           },
@@ -299,7 +299,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(RentInformation)10146_storage": {
+          "t_struct(RentInformation)11042_storage": {
             "label": "struct INFTRental.RentInformation",
             "members": [
               {
@@ -340,7 +340,7 @@
     },
     "963b21129feb138d2ec931188906da053d238e2ec08be7f1c52a3927e43e8e05": {
       "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-      "txHash": "0x7c0b51d8d42e34976945143f6ffb0ec457ea8979d7f1d37f777bebd334aacb87",
+      "txHash": "0x01875890876fb4a44f6dae7ded81ba920c3ed95cf102bee80881ed164c094c9b",
       "layout": {
         "storage": [
           {
@@ -540,7 +540,7 @@
             "label": "NFT_RENTAL",
             "offset": 0,
             "slot": "403",
-            "type": "t_contract(INFTRental)10195",
+            "type": "t_contract(INFTRental)11091",
             "contract": "NFTStaking",
             "src": "contracts\\Staking-Rental\\NFTStaking.sol:32"
           },
@@ -548,7 +548,7 @@
             "label": "stakeInformation",
             "offset": 0,
             "slot": "404",
-            "type": "t_mapping(t_uint256,t_struct(StakeInformation)10232_storage)",
+            "type": "t_mapping(t_uint256,t_struct(StakeInformation)11128_storage)",
             "contract": "NFTStaking",
             "src": "contracts\\Staking-Rental\\NFTStaking.sol:33"
           }
@@ -586,7 +586,7 @@
             "label": "contract IERC721",
             "numberOfBytes": "20"
           },
-          "t_contract(INFTRental)10195": {
+          "t_contract(INFTRental)11091": {
             "label": "contract INFTRental",
             "numberOfBytes": "20"
           },
@@ -610,7 +610,7 @@
             "label": "mapping(uint256 => address)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(StakeInformation)10232_storage)": {
+          "t_mapping(t_uint256,t_struct(StakeInformation)11128_storage)": {
             "label": "mapping(uint256 => struct INFTStaking.StakeInformation)",
             "numberOfBytes": "32"
           },
@@ -622,7 +622,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(StakeInformation)10232_storage": {
+          "t_struct(StakeInformation)11128_storage": {
             "label": "struct INFTStaking.StakeInformation",
             "members": [
               {

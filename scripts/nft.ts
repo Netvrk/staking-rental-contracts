@@ -5,11 +5,11 @@ async function main() {
   const nft = await nftContract.deploy(
     "XYZ",
     "XYZ",
-    "https://api.netvrk.co/api/items/"
+    "https://api.netvrk.co/api/avatar/"
   );
   await nft.deployed();
 
-  console.log("Axe NFT deployed to:", nft.address);
+  console.log("Avatar NFT deployed to:", nft.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
