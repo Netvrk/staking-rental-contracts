@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.16;
 
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
@@ -24,17 +24,15 @@ interface INFTRental is IERC165 {
 
     function isRentActive(uint256 _tokenId) external view returns (bool);
 
-    function getRentInformation(uint256 _tokenId)
-        external
-        view
-        returns (RentInformation memory);
+    function getRentInformation(
+        uint256 _tokenId
+    ) external view returns (RentInformation memory);
 
     function isRentable(uint256 _tokenId) external view returns (bool state);
 
-    function rentalPaidUntil(uint256 _tokenId)
-        external
-        view
-        returns (uint256 paidUntil);
+    function rentalPaidUntil(
+        uint256 _tokenId
+    ) external view returns (uint256 paidUntil);
 
     function startRent(uint256 _tokenId, uint256 _initialPayment) external;
 

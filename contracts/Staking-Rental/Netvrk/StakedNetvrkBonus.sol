@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.11;
+pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeCastUpgradeable.sol";
-
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -38,10 +37,10 @@ contract StakedNetvrkBonus is
     // Admin Functions 
     ///////////////////////////////////////////////////
      */
-    function initialize(address _nftAddress, string memory baseURI)
-        public
-        initializer
-    {
+    function initialize(
+        address _nftAddress,
+        string memory baseURI
+    ) public initializer {
         require(_nftAddress != address(0), "INVALID_NFT_ADDRESS");
 
         __UUPSUpgradeable_init();
@@ -157,11 +156,10 @@ contract StakedNetvrkBonus is
     }
 
     // Extend rental period of ongoing rent
-    function extendRentalPeriod(uint256 _tokenId, uint32 _rentableUntil)
-        external
-        virtual
-        override
-    {
+    function extendRentalPeriod(
+        uint256 _tokenId,
+        uint32 _rentableUntil
+    ) external virtual override {
         StakeInformation storage stakeInfo_ = stakeInformation[_tokenId];
         require(
             NFT_ERC721.ownerOf(_tokenId) == address(this) &&
@@ -177,12 +175,10 @@ contract StakedNetvrkBonus is
     }
 
     // Unstake tokens and remove rental
-    function unstake(uint256[] calldata _tokenIds, address _unstakeTo)
-        external
-        virtual
-        override
-        nonReentrant
-    {
+    function unstake(
+        uint256[] calldata _tokenIds,
+        address _unstakeTo
+    ) external virtual override nonReentrant {
         _ensureEOAorERC721Receiver(_unstakeTo);
         require(_unstakeTo != address(this), "INVALID_STAKE_TO");
 
@@ -257,22 +253,16 @@ contract StakedNetvrkBonus is
     }
 
     // Get stake information
-    function getStakeInformation(uint256 _tokenId)
-        external
-        view
-        override
-        returns (StakeInformation memory)
-    {
+    function getStakeInformation(
+        uint256 _tokenId
+    ) external view override returns (StakeInformation memory) {
         return stakeInformation[_tokenId];
     }
 
     // Get owner of the staking tokens
-    function getOriginalOwner(uint256 _tokenId)
-        external
-        view
-        override
-        returns (address)
-    {
+    function getOriginalOwner(
+        uint256 _tokenId
+    ) external view override returns (address) {
         if (NFT_ERC721.ownerOf(_tokenId) == address(this)) {
             return stakeInformation[_tokenId].owner;
         }
@@ -281,12 +271,9 @@ contract StakedNetvrkBonus is
     }
 
     // Get stake duration information
-    function getStakingDuration(uint256 _tokenId)
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function getStakingDuration(
+        uint256 _tokenId
+    ) external view override returns (uint256) {
         if (stakeInformation[_tokenId].stakedFrom == 0) {
             return 0;
         }
@@ -294,12 +281,9 @@ contract StakedNetvrkBonus is
     }
 
     // Get if the stake is active or inactive
-    function isStakeActive(uint256 _tokenId)
-        public
-        view
-        override
-        returns (bool)
-    {
+    function isStakeActive(
+        uint256 _tokenId
+    ) public view override returns (bool) {
         return
             stakeInformation[_tokenId].owner != address(0) &&
             ownerOf(_tokenId) != address(0);
@@ -363,7 +347,9 @@ contract StakedNetvrkBonus is
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual

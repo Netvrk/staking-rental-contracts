@@ -1,16 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.16;
 
 /**
     helper methods for interacting with ERC20 tokens that do not consistently return true/false
     with the addition of a transfer function to send eth or an erc20 token
 */
 library TransferHelper {
-    function safeApprove(
-        address token,
-        address to,
-        uint256 value
-    ) internal {
+    function safeApprove(address token, address to, uint256 value) internal {
         (bool success, bytes memory data) = token.call(
             abi.encodeWithSelector(0x095ea7b3, to, value)
         );
@@ -20,11 +16,7 @@ library TransferHelper {
         );
     }
 
-    function safeTransfer(
-        address token,
-        address to,
-        uint256 value
-    ) internal {
+    function safeTransfer(address token, address to, uint256 value) internal {
         (bool success, bytes memory data) = token.call(
             abi.encodeWithSelector(0xa9059cbb, to, value)
         );

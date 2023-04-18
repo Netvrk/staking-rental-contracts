@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.16;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
@@ -27,15 +27,13 @@ interface INFTStaking is IERC165, IERC721Receiver {
 
     function getRentalContractAddress() external view returns (address);
 
-    function getStakeInformation(uint256 _tokenId)
-        external
-        view
-        returns (StakeInformation memory);
+    function getStakeInformation(
+        uint256 _tokenId
+    ) external view returns (StakeInformation memory);
 
-    function getStakingDuration(uint256 _tokenId)
-        external
-        view
-        returns (uint256);
+    function getStakingDuration(
+        uint256 _tokenId
+    ) external view returns (uint256);
 
     function isStakeActive(uint256 _tokenId) external view returns (bool);
 
@@ -65,8 +63,10 @@ interface INFTStaking is IERC165, IERC721Receiver {
         bool _enableRent
     ) external;
 
-    function extendRentalPeriod(uint256 _tokenId, uint32 _rentableUntil)
-        external;
+    function extendRentalPeriod(
+        uint256 _tokenId,
+        uint32 _rentableUntil
+    ) external;
 
     function unstake(uint256[] calldata _tokenIds, address _unstakeTo) external;
 }

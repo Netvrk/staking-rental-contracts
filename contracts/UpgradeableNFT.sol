@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.16;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
@@ -24,11 +24,10 @@ contract UpgradeableNFT is
     }
 
     // Mint game item
-    function mintItem(address player, uint256 itemId)
-        public
-        onlyOwner
-        returns (uint256)
-    {
+    function mintItem(
+        address player,
+        uint256 itemId
+    ) public onlyOwner returns (uint256) {
         _mint(player, itemId);
         return itemId;
     }

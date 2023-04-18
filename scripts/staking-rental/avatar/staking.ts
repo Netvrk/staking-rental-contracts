@@ -10,8 +10,8 @@ dotenv.config();
 async function main() {
   const proxyAddress = null;
   const PURPOSE_REQ = 0;
-  const nft = "0xE9f906d31ADD9729B6e4c4329B8Aa7990c2f039C";
-  const baseURI = "https://api.netvrk.co/api/avatar/";
+  const nft = "0xdc403FCDf735426e77Fdd3bbD6223a3ac03eF3b3";
+  const baseURI = "https://api.netvrk.co/api/staked-avatar/";
   let staking = null;
 
   if (proxyAddress) {
@@ -37,6 +37,7 @@ async function main() {
       await staking.deployed();
     }
   } else {
+    console.log(nft, baseURI);
     const StakedNetvrkAvatar = await ethers.getContractFactory(
       "StakedNetvrkAvatar"
     );

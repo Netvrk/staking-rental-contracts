@@ -17,7 +17,7 @@ dotenv.config();
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.11",
+    version: "0.8.16",
     settings: {
       optimizer: {
         enabled: true,
@@ -33,9 +33,18 @@ const config: HardhatUserConfig = {
         process.env.PRIVATE_KEY_DEPLOYER !== undefined
           ? [process.env.PRIVATE_KEY_DEPLOYER]
           : [],
+      gasPrice: 70000000000,
+      gasMultiplier: 1.5,
     },
     goerli: {
       url: process.env.GOERLI_URL || "",
+      accounts:
+        process.env.PRIVATE_KEY_1 !== undefined
+          ? [process.env.PRIVATE_KEY_1]
+          : [],
+    },
+    sepolia: {
+      url: process.env.SEPOLIA_URL || "",
       accounts:
         process.env.PRIVATE_KEY_1 !== undefined
           ? [process.env.PRIVATE_KEY_1]

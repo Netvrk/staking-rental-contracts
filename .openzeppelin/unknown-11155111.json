@@ -2,20 +2,15 @@
   "manifestVersion": "3.2",
   "proxies": [
     {
-      "address": "0xC02262219a12637Abe5D4417Fd9Fe3c73BfF56b7",
-      "txHash": "0x873719aef4c6f5650705bf96aced3c1f515599c48372a56bfc799a17bc401ff4",
-      "kind": "uups"
-    },
-    {
-      "address": "0x611D19EeBb79C95259F341dADA44562940F7d807",
-      "txHash": "0x992bfea59989562ee2cc73535d23e8e8c41122fd30d652f1644ce3d1d736fdde",
+      "address": "0xe88A781C82d3Eb8b1C1A98C270f2826B8bcc5DBb",
+      "txHash": "0xbed86f0ba12a3bf537b156dd38fac680afbf826692b4aa6da919efd95660a590",
       "kind": "uups"
     }
   ],
   "impls": {
-    "963b21129feb138d2ec931188906da053d238e2ec08be7f1c52a3927e43e8e05": {
-      "address": "0x2A86dcdBB35706C2718050C7Cbc9C1f1620d6ba0",
-      "txHash": "0x693a17176e008fa9c675c413cde4e3d776d2815fb9f27e1c76cba49eac27924c",
+    "26520bc9682fcd0a9969038060ccd65a4c6cd68e8539ea88f59f3003eb3a4c90": {
+      "address": "0x84d24783E12a41B80D2c52E0c0A075739959F959",
+      "txHash": "0xfe0f4c168ae5c8abb5a33d23fecc3b0a84e85c234a6047694e42688a794d4756",
       "layout": {
         "storage": [
           {
@@ -200,32 +195,32 @@
             "offset": 0,
             "slot": "401",
             "type": "t_string_storage",
-            "contract": "NFTStaking",
-            "src": "contracts\\Staking-Rental\\NFTStaking.sol:27"
+            "contract": "StakedNetvrkAvatar",
+            "src": "contracts\\Staking-Rental\\Netvrk\\StakedNetvrkAvatar.sol:28"
           },
           {
             "label": "NFT_ERC721",
             "offset": 0,
             "slot": "402",
-            "type": "t_contract(IERC721)3403",
-            "contract": "NFTStaking",
-            "src": "contracts\\Staking-Rental\\NFTStaking.sol:29"
+            "type": "t_contract(IERC721)5902",
+            "contract": "StakedNetvrkAvatar",
+            "src": "contracts\\Staking-Rental\\Netvrk\\StakedNetvrkAvatar.sol:30"
           },
           {
             "label": "NFT_RENTAL",
             "offset": 0,
             "slot": "403",
-            "type": "t_contract(INFTRental)3516",
-            "contract": "NFTStaking",
-            "src": "contracts\\Staking-Rental\\NFTStaking.sol:31"
+            "type": "t_contract(INFTRental)11091",
+            "contract": "StakedNetvrkAvatar",
+            "src": "contracts\\Staking-Rental\\Netvrk\\StakedNetvrkAvatar.sol:32"
           },
           {
             "label": "stakeInformation",
             "offset": 0,
             "slot": "404",
-            "type": "t_mapping(t_uint256,t_struct(StakeInformation)3553_storage)",
-            "contract": "NFTStaking",
-            "src": "contracts\\Staking-Rental\\NFTStaking.sol:32"
+            "type": "t_mapping(t_uint256,t_struct(StakeInformation)11128_storage)",
+            "contract": "StakedNetvrkAvatar",
+            "src": "contracts\\Staking-Rental\\Netvrk\\StakedNetvrkAvatar.sol:33"
           }
         ],
         "types": {
@@ -257,11 +252,11 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(IERC721)3403": {
+          "t_contract(IERC721)5902": {
             "label": "contract IERC721",
             "numberOfBytes": "20"
           },
-          "t_contract(INFTRental)3516": {
+          "t_contract(INFTRental)11091": {
             "label": "contract INFTRental",
             "numberOfBytes": "20"
           },
@@ -285,7 +280,7 @@
             "label": "mapping(uint256 => address)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(StakeInformation)3553_storage)": {
+          "t_mapping(t_uint256,t_struct(StakeInformation)11128_storage)": {
             "label": "mapping(uint256 => struct INFTStaking.StakeInformation)",
             "numberOfBytes": "32"
           },
@@ -297,7 +292,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(StakeInformation)3553_storage": {
+          "t_struct(StakeInformation)11128_storage": {
             "label": "struct INFTStaking.StakeInformation",
             "members": [
               {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.16;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
@@ -22,11 +22,10 @@ contract RolesNFT is ERC4907, ERC721Enumerable, Ownable, Pausable {
     }
 
     // Mint game item
-    function mintItem(address player, uint256 itemId)
-        public
-        onlyOwner
-        returns (uint256)
-    {
+    function mintItem(
+        address player,
+        uint256 itemId
+    ) public onlyOwner returns (uint256) {
         _mint(player, itemId);
         return itemId;
     }
@@ -60,13 +59,9 @@ contract RolesNFT is ERC4907, ERC721Enumerable, Ownable, Pausable {
         super._beforeTokenTransfer(from, to, amount);
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(ERC4907, ERC721Enumerable)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(ERC4907, ERC721Enumerable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }

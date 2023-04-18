@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.11;
+pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -34,10 +34,10 @@ contract NFTRental is
     // Admin Functions 
     ///////////////////////////////////////////////////
      */
-    function initialize(address _tokenAddress, INFTStaking _stakingAddress)
-        public
-        initializer
-    {
+    function initialize(
+        address _tokenAddress,
+        INFTStaking _stakingAddress
+    ) public initializer {
         require(_tokenAddress != address(0), "INVALID_TOKEN_ADDRESS");
         require(
             _stakingAddress.supportsInterface(type(INFTStaking).interfaceId),
@@ -66,12 +66,10 @@ contract NFTRental is
      */
 
     // Start the rent to a staked token
-    function startRent(uint256 _tokenId, uint256 _initialPayment)
-        external
-        virtual
-        override
-        nonReentrant
-    {
+    function startRent(
+        uint256 _tokenId,
+        uint256 _initialPayment
+    ) external virtual override nonReentrant {
         INFTStaking.StakeInformation memory stakeInfo_ = NFTStaking
             .getStakeInformation(_tokenId);
         RentInformation memory rentInformation_ = rentInformation[_tokenId];
@@ -118,12 +116,10 @@ contract NFTRental is
     // Used by tenant to pay rent in advance. As soon as the tenant defaults the renter can vacate the tenant
     // The rental period can be extended as long as rent is prepaid, up to rentableUntil timestamp.
     // payment unit in ether
-    function payRent(uint256 _tokenId, uint256 _payment)
-        external
-        virtual
-        override
-        nonReentrant
-    {
+    function payRent(
+        uint256 _tokenId,
+        uint256 _payment
+    ) external virtual override nonReentrant {
         INFTStaking.StakeInformation memory stakeInfo_ = NFTStaking
             .getStakeInformation(_tokenId);
         RentInformation memory rentInformation_ = rentInformation[_tokenId];
@@ -170,24 +166,17 @@ contract NFTRental is
     // View Only Functions 
     ///////////////////////////////////////////////////
      */
-    function isRentActive(uint256 _tokenId)
-        public
-        view
-        override
-        returns (bool)
-    {
+    function isRentActive(
+        uint256 _tokenId
+    ) public view override returns (bool) {
         return
             rentInformation[_tokenId].tenant != address(0) &&
             ownerOf(_tokenId) != address(0);
     }
 
-    function isRentable(uint256 _tokenId)
-        external
-        view
-        virtual
-        override
-        returns (bool state)
-    {
+    function isRentable(
+        uint256 _tokenId
+    ) external view virtual override returns (bool state) {
         INFTStaking.StakeInformation memory stakeInfo_ = NFTStaking
             .getStakeInformation(_tokenId);
         RentInformation memory rentInformation_ = rentInformation[_tokenId];
@@ -203,13 +192,9 @@ contract NFTRental is
     }
 
     // Get rental amount paid until now
-    function rentalPaidUntil(uint256 _tokenId)
-        public
-        view
-        virtual
-        override
-        returns (uint256 paidUntil)
-    {
+    function rentalPaidUntil(
+        uint256 _tokenId
+    ) public view virtual override returns (uint256 paidUntil) {
         INFTStaking.StakeInformation memory stakeInfo_ = NFTStaking
             .getStakeInformation(_tokenId);
         RentInformation memory rentInformation_ = rentInformation[_tokenId];
@@ -236,12 +221,9 @@ contract NFTRental is
     }
 
     // Get rent information
-    function getRentInformation(uint256 _tokenId)
-        external
-        view
-        override
-        returns (RentInformation memory)
-    {
+    function getRentInformation(
+        uint256 _tokenId
+    ) external view override returns (RentInformation memory) {
         return rentInformation[_tokenId];
     }
 
@@ -263,7 +245,9 @@ contract NFTRental is
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual

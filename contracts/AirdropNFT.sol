@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.16;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
@@ -71,11 +71,9 @@ contract AirdropNFT is ERC721Enumerable, Ownable {
 
     // ~~~ mint batch and airdrop ~~~
 
-    function mintBatchAirdrop(address[] memory _addresses)
-        public
-        onlyMinters
-        mintingNotLocked
-    {
+    function mintBatchAirdrop(
+        address[] memory _addresses
+    ) public onlyMinters mintingNotLocked {
         uint256 currentId = ctr.current();
         uint256 tokenId;
 
