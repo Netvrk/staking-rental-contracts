@@ -33,7 +33,7 @@ const config: HardhatUserConfig = {
         process.env.PRIVATE_KEY_DEPLOYER !== undefined
           ? [process.env.PRIVATE_KEY_DEPLOYER]
           : [],
-      gasPrice: 70000000000,
+      gasPrice: 60000000000,
       gasMultiplier: 1.5,
     },
     goerli: {

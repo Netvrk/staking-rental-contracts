@@ -38,13 +38,14 @@ async function main() {
     }
   } else {
     console.log(nft, baseURI);
+
     const StakedNetvrkAvatar = await ethers.getContractFactory(
       "StakedNetvrkAvatar"
     );
+
     staking = await upgrades.deployProxy(StakedNetvrkAvatar, [nft, baseURI], {
       kind: "uups",
     });
-
     await staking.deployed();
   }
 
